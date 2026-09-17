@@ -1,0 +1,6 @@
+Added Pin To Net: NetName=CE Pin=U-14
+Added Net: Name=CE
+Added Pin To Net: NetName=RE Pin=U-13
+Added Net: Name=RE
+Added Pin To Net: NetName=WE Pin=U-12
+Added Net: Name=WE

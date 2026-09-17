@@ -1,0 +1,24 @@
+Removed Pin From Net: NetName=Gnd Pin=P14-1
+Removed Pin From Net: NetName=D21 Pin=P14-2
+Removed Pin From Net: NetName=D22 Pin=P14-3
+Removed Pin From Net: NetName=D23 Pin=P14-4
+Removed Pin From Net: NetName=D16/Rx Pin=P14-5
+Removed Pin From Net: NetName=D17/Tx Pin=P14-6
+Removed Member From Class: ClassName=Sensors Member=P14
+Added Component: Designator=U4(MODULE_ESP32-DEVKITC-32D)
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/ESP32-DEVKITC-32D/Espressif+Systems/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Espressif Systems"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "ESP32-DEVKITC-32D"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/ESP32-DEVKITC-32D/Espressif+Systems/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=Gnd Pin=U4-J2-14
+Added Pin To Net: NetName=+5 Pin=U4-J2-19
+Added Pin To Net: NetName=Gnd Pin=U4-J3-1
+Added Pin To Net: NetName=D23 Pin=U4-J3-2
+Added Pin To Net: NetName=D22 Pin=U4-J3-3
+Added Pin To Net: NetName=D21 Pin=U4-J3-6
+Added Pin To Net: NetName=Gnd Pin=U4-J3-7
+Added Pin To Net: NetName=D17/Tx Pin=U4-J3-11
+Added Pin To Net: NetName=D16/Rx Pin=U4-J3-12
+Added Member To Class: ClassName=Sensors Member=Component U4 ESP32-DEVKITC-32D

@@ -1,0 +1,27 @@
+Added Component: Designator=(MODULE_ESP32-DEVKITC-32D)
+Add component (AddParameter): Name = "Check_prices"; Value = "https://www.snapeda.com/parts/ESP32-DEVKITC-32D/Espressif+Systems/view-part/?ref=eda"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Espressif Systems"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "ESP32-DEVKITC-32D"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/ESP32-DEVKITC-32D/Espressif+Systems/view-part/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Component: Designator=(FP-TSW-102-22-G-S-MFG)
+Added Component: Designator=P14(SMTC-TSW-106-23-X-S)
+Added Component: Designator=U(RRH62000)
+Add Pin To Net: Unknown Pin: Pin -1
+Add Pin To Net: Unknown Pin: Pin -2
+Added Pin To Net: NetName=Gnd Pin=-J2-14
+Added Pin To Net: NetName=+5 Pin=-J2-19
+Added Pin To Net: NetName=Gnd Pin=-J3-1
+Added Pin To Net: NetName=D23 Pin=-J3-2
+Added Pin To Net: NetName=D22 Pin=-J3-3
+Added Pin To Net: NetName=D21 Pin=-J3-6
+Added Pin To Net: NetName=Gnd Pin=-J3-7
+Added Pin To Net: NetName=D17/Tx Pin=-J3-11
+Added Pin To Net: NetName=D16/Rx Pin=-J3-12
+Added Pin To Net: NetName=PM_Tx/SCL Pin=U-1
+Added Pin To Net: NetName=PM_Rx/SDA Pin=U-2
+Added Pin To Net: NetName=PM_Sel Pin=U-3
+Added Pin To Net: NetName=+5 Pin=U-5
+Added Pin To Net: NetName=Gnd Pin=U-6
+Added Class: Name=Prototype2

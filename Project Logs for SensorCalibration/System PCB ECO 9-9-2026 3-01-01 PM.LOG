@@ -1,0 +1,17 @@
+Removed Member From Class: ClassName=TIA Member=U5
+Change Component Designator: OldDesignator=1 NewDesignator=U6
+Change Component Designator: OldDesignator=U6 NewDesignator=U7
+Added Component: Designator=J2(FP-TSW-102-22-G-S-MFG)
+Added Component: Designator=P14(SMTC-TSW-106-23-X-S)
+Add Pin To Net: Unknown Pin: Pin J2-1
+Add Pin To Net: Unknown Pin: Pin J2-2
+Add Class Member: Failed to add class member : Component J2 Type C
+Added Member To Class: ClassName=TIA Member=Component P4 61300311121
+Added Member To Class: ClassName=TIA Member=Component P5 TSW-102-26-F-S
+Added Member To Class: ClassName=Sensors Member=Component P8 ZE25-O3
+Added Member To Class: ClassName=Sensors Member=Component P9 ZE07-CO
+Added Member To Class: ClassName=Sensors Member=Component P12 ZE07-CO
+Add Class Member: Failed to add class member : Component P14 RRH2000-PM
+Added Member To Class: ClassName=TIA Member=Component U1 Transimpedance Amplifier
+Added Member To Class: ClassName=Sensors Member=Component U3 74HC4051PW
+Added Member To Class: ClassName=Sensors Member=Component U4 74HC4051PW
