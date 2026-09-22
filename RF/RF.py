@@ -7,6 +7,8 @@ from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_sco
 # 1. Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset\Basic_dataset.csv").dropna()
 df_test = pd.read_csv("Dataset\Meta_dataset.csv").dropna()
+df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+
 
 # 2. Define Features and Target (must match exact CSV column headers)
 feature_cols = ['S3', 'S4', 'S1','S2'] 
@@ -22,9 +24,9 @@ y_test = df_test[target_col]
 # 4. Initialize Random Forest with explicit hyperparameter control
 rf_model = RandomForestRegressor(
     n_estimators=1000,     # Total number of decision trees in the forest
-    max_depth=16,         # Maximum depth limit for each tree (prevents overfitting)
+    max_depth=17,         # Maximum depth limit for each tree (prevents overfitting)
     max_features=3,  # Features considered at each split ('sqrt', 'log2', or integer/float)
-    random_state=68       # Seed for reproducible results
+    random_state=61     # Seed for reproducible results
 )
 
 # 5. Train the model on the full training dataset
@@ -32,6 +34,10 @@ rf_model.fit(X_train, y_train)
 
 # 6. Predict on the separate test dataset
 y_pred = rf_model.predict(X_test)
+
+df_test_results['prediction'] = y_pred #Add the predictions as a new column
+
+df_test_results.to_csv("RF_dataset_with_predictions.csv", index=False) # Save the new DataFrame to a CSV file
 
 # 7. Evaluate model performance including MAE
 mae = mean_absolute_error(y_test, y_pred)
@@ -86,5 +92,5 @@ ax2.grid(True, linestyle='--', alpha=0.5)
 
 # Adjust layout and display / save graph
 plt.tight_layout()
-plt.savefig('model_validation_results.png', dpi=300)
+plt.savefig('rf_validation_results.png', dpi=300)
 plt.show()

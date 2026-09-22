@@ -8,6 +8,7 @@ from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_sco
 # 1. Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset\Basic_dataset.csv").dropna()
 df_test = pd.read_csv("Dataset\Meta_dataset.csv").dropna()
+df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # 2. Define Features and Target (must match exact CSV column headers)
 feature_cols = ['S3', 'S4', 'S1','S2'] 
@@ -27,9 +28,9 @@ X_test_scaled = scaler_X.transform(X_test)
 # 4. Initialize SVR with explicit hyperparameter control
 svr_model = SVR(
     kernel='rbf',    # Radial Basis Function kernel
-    C=10.0,          # Penalty parameter C (controls support vector force cap)
-    epsilon=0.1,     # Epsilon-insensitive tube margin
-    gamma=0.1        # Kernel coefficient (controls influence radius of each SV; or 'scale'/'auto')
+    C=25.0,          # Penalty parameter C (controls support vector force cap)
+    epsilon=0.01,     # Epsilon-insensitive tube margin
+    gamma=0.07        # Kernel coefficient (controls influence radius of each SV; or 'scale'/'auto')
 )
 
 # 5. Train the SVR model on the scaled training dataset
@@ -37,6 +38,10 @@ svr_model.fit(X_train_scaled, y_train)
 
 # 6. Predict on the separate scaled test dataset
 y_pred = svr_model.predict(X_test_scaled)
+
+df_test_results['prediction'] = y_pred #Add the predictions as a new column
+
+df_test_results.to_csv("SVR_dataset_with_predictions.csv", index=False) # Save the new DataFrame to a CSV file
 
 # 7. Evaluate model performance metrics
 mae = mean_absolute_error(y_test, y_pred)
