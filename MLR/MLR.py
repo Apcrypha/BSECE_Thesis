@@ -1,72 +1,62 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVR
+import joblib
+import os
+
+saveModel_directory = "Models"
+saveGraph_directory = "Graphs"
+saveCSV_directory = "CSV_Results"
+
+# Import / Load the pre-trained models from disk
+rf_model = joblib.load('Models\Base_rf_model.joblib')
+svr_model = joblib.load('Models\Base_svr_model.joblib')
+scaler_X = joblib.load('Models\Base_svr_scaler_model.joblib')
+
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("..\Basic_output.csv").dropna()
-df_test = pd.read_csv("..\Validation_dataset.csv").dropna()
+df_train = pd.read_csv("Dataset\Meta_dataset.csv").dropna()
+df_test = pd.read_csv("Dataset\Validation_dataset.csv").dropna()
+df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
-# 2. Define Base Features and Ground-Truth Target
-feature_cols = ['temp', 'RH', 'raw_PM25']  # Input features for base learners
-target_col = 'reference_BAM'  # Target label
+# 2. Define Features and Target (must match exact CSV column headers)
+feature_cols = ['S3', 'S4', 'S1','S2'] 
+target_col = 'Ref'                
 
-X_train = df_train[feature_cols]
-y_train = df_train[target_col]
+X_meta_train_raw = df_train[feature_cols]
+y_meta = df_train[target_col]
 
-X_test = df_test[feature_cols]
+X_meta_test_raw = df_test[feature_cols]
 y_test = df_test[target_col]
 
-# 3. Train Level-0 Base Learners (RF & Scaled SVR)
-# --- Base Learner 1: Random Forest ---
-rf_model = RandomForestRegressor(
-    n_estimators=150, max_depth=12, max_features='sqrt', random_state=42
-)
-rf_model.fit(X_train, y_train)
+X_meta_scaled = scaler_X.transform(X_meta_train_raw)
+X_meta_test_scaled = scaler_X.transform(X_meta_test_raw)
 
-# --- Base Learner 2: Support Vector Regression (Scaled) ---
-scaler_X = StandardScaler()
-X_train_scaled = scaler_X.fit_transform(X_train)
-X_test_scaled = scaler_X.transform(X_test)
+pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
+pred_svr_meta_train = svr_model.predict(X_meta_scaled)
 
-svr_model = SVR(kernel='rbf', C=10.0, epsilon=0.1, gamma=0.1)
-svr_model.fit(X_train_scaled, y_train)
+pred_rf_meta_test = rf_model.predict(X_meta_test_raw)
+pred_svr_meta_test = svr_model.predict(X_meta_test_scaled)
 
-# 4. Generate Base Model Predictions to Form Level-1 Feature Matrices
-# Training set meta-features (Level-0 predictions on train set)
-pred_rf_train = rf_model.predict(X_train)
-pred_svr_train = svr_model.predict(X_train_scaled)
-X_meta_train = np.column_stack((pred_rf_train, pred_svr_train))
+X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_meta_train   ))
+X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_meta_test))  
 
-# Testing set meta-features (Level-0 predictions on test set)
-pred_rf_test = rf_model.predict(X_test)
-pred_svr_test = svr_model.predict(X_test_scaled)
-X_meta_test = np.column_stack((pred_rf_test, pred_svr_test))
-
-# 5. Train Level-1 Meta-Learner (Multiple Linear Regression)
 mlr_model = LinearRegression()
-mlr_model.fit(X_meta_train, y_train)
+mlr_model.fit(X_meta_train_stacked, y_meta)
 
-# 6. Predict Final Ensembled Concentrations on Test Dataset
-y_pred = mlr_model.predict(X_meta_test)
+joblib.dump(mlr_model, os.path.join(saveModel_directory, 'Meta_MLR_model.joblib'))
 
-# 7. Model Parameter Inspection & Evaluation Metrics
-w_rf = mlr_model.coef_[0]
-w_svr = mlr_model.coef_[1]
-bias = mlr_model.intercept_
+y_pred = mlr_model.predict(X_meta_test_stacked)
+
+df_test_results['prediction'] = y_pred #Add the predictions as a new column
+
+df_test_results.to_csv(os.path.join(saveCSV_directory, "MLR_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
 
 mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
-
-print("--- MLR Meta-Learner Equation Parameters ---")
-print(f"Random Forest Weight (w1) : {w_rf:.4f}")
-print(f"SVR Weight           (w2) : {w_svr:.4f}")
-print(f"Bias Offset          (b)  : {bias:.4f}\n")
 
 print("--- Stacked MLR Validation Metrics ---")
 print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
@@ -156,5 +146,5 @@ ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig('mlr_stacked_validation_results.png', dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'M_validation_results.png'), dpi=300)
 plt.show()

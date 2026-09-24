@@ -3,6 +3,13 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
+import joblib
+import os
+
+saveModel_directory = "Models"
+saveGraph_directory = "Graphs"
+saveCSV_directory = "CSV_Results"
+
 
 # 1. Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset\Basic_dataset.csv").dropna()
@@ -32,12 +39,14 @@ rf_model = RandomForestRegressor(
 # 5. Train the model on the full training dataset
 rf_model.fit(X_train, y_train)
 
+joblib.dump(rf_model, os.path.join(saveModel_directory, 'Base_rf_model.joblib')) # Save the RF model to a file for future use
+
 # 6. Predict on the separate test dataset
 y_pred = rf_model.predict(X_test)
 
 df_test_results['prediction'] = y_pred #Add the predictions as a new column
 
-df_test_results.to_csv("RF_dataset_with_predictions.csv", index=False) # Save the new DataFrame to a CSV file
+df_test_results.to_csv(os.path.join(saveCSV_directory, "RF_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
 
 # 7. Evaluate model performance including MAE
 mae = mean_absolute_error(y_test, y_pred)
@@ -92,5 +101,5 @@ ax2.grid(True, linestyle='--', alpha=0.5)
 
 # Adjust layout and display / save graph
 plt.tight_layout()
-plt.savefig('rf_validation_results.png', dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'rf_validation_results.png'), dpi=300)
 plt.show()

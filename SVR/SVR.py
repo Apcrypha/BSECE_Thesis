@@ -4,6 +4,13 @@ import pandas as pd
 from sklearn.svm import SVR
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
+import joblib
+import os
+
+saveModel_directory = "Models"
+saveGraph_directory = "Graphs"
+saveCSV_directory = "CSV_Results"
+
 
 # 1. Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset\Basic_dataset.csv").dropna()
@@ -22,8 +29,11 @@ y_test = df_test[target_col]
 
 # 3. Feature Scaling (Crucial for SVR distance calculations)
 scaler_X = StandardScaler()
+
 X_train_scaled = scaler_X.fit_transform(X_train)
 X_test_scaled = scaler_X.transform(X_test)
+
+joblib.dump(scaler_X, os.path.join(saveModel_directory, 'Base_svr_scaler_model.joblib'))
 
 # 4. Initialize SVR with explicit hyperparameter control
 svr_model = SVR(
@@ -36,12 +46,14 @@ svr_model = SVR(
 # 5. Train the SVR model on the scaled training dataset
 svr_model.fit(X_train_scaled, y_train)
 
+joblib.dump(svr_model, os.path.join(saveModel_directory, 'Base_svr_model.joblib')) # Save the SVR model to a file for future use
+
 # 6. Predict on the separate scaled test dataset
 y_pred = svr_model.predict(X_test_scaled)
 
 df_test_results['prediction'] = y_pred #Add the predictions as a new column
 
-df_test_results.to_csv("SVR_dataset_with_predictions.csv", index=False) # Save the new DataFrame to a CSV file
+df_test_results.to_csv(os.path.join(saveCSV_directory, "SVR_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
 
 # 7. Evaluate model performance metrics
 mae = mean_absolute_error(y_test, y_pred)
@@ -87,5 +99,5 @@ ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig('svr_validation_results.png', dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'svr_validation_results.png'), dpi=300)
 plt.show()
