@@ -16,30 +16,34 @@ svr_model = joblib.load('Models\Base_svr_model.joblib')
 scaler_X = joblib.load('Models\Base_svr_scaler_model.joblib')
 
 
-# 1. Load separate Training and Testing CSV datasets
+# Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset\Meta_dataset.csv").dropna()
 df_test = pd.read_csv("Dataset\Validation_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
-# 2. Define Features and Target (must match exact CSV column headers)
+# Define Features and Target (must match exact CSV column headers)
 feature_cols = ['S3', 'S4', 'S1','S2'] 
 target_col = 'Ref'                
 
+# Assign the features and target for meta-model training and testing
 X_meta_train_raw = df_train[feature_cols]
 y_meta = df_train[target_col]
 
 X_meta_test_raw = df_test[feature_cols]
 y_test = df_test[target_col]
 
+# Scale the meta-model features using the pre-trained scaler
 X_meta_scaled = scaler_X.transform(X_meta_train_raw)
 X_meta_test_scaled = scaler_X.transform(X_meta_test_raw)
 
+# Predict using the base models
 pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
 pred_svr_meta_train = svr_model.predict(X_meta_scaled)
 
 pred_rf_meta_test = rf_model.predict(X_meta_test_raw)
 pred_svr_meta_test = svr_model.predict(X_meta_test_scaled)
 
+# Stack the predictions from the base models to create the meta-model training and testing datasets
 X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_meta_train   ))
 X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_meta_test))  
 
