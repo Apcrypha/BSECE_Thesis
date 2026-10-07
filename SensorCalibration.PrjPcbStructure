@@ -1,4 +1,5 @@
-Record=TopLevelDocument|FileName=Prototype.SchDoc|SheetNumber=1
-Record=NoMainPathDocument|SourceDocument=Prototype.SchDoc|FileName=Prototype2.SchDoc|SheetNumber=4
-Record=NoMainPathDocument|SourceDocument=Prototype.SchDoc|FileName=Sensors.SchDoc|SheetNumber=3
-Record=NoMainPathDocument|SourceDocument=Prototype.SchDoc|FileName=TIA.SchDoc|SheetNumber=2
+Record=TopLevelDocument|FileName=Actual_Prototype.SchDoc|SheetNumber=4
+Record=NoMainPathDocument|SourceDocument=Actual_Prototype.SchDoc|FileName=Proposed_Prototype.SchDoc|SheetNumber=5
+Record=NoMainPathDocument|SourceDocument=Actual_Prototype.SchDoc|FileName=Prototype.SchDoc|SheetNumber=1
+Record=NoMainPathDocument|SourceDocument=Actual_Prototype.SchDoc|FileName=Sensors.SchDoc|SheetNumber=3
+Record=NoMainPathDocument|SourceDocument=Actual_Prototype.SchDoc|FileName=TIA.SchDoc|SheetNumber=2
