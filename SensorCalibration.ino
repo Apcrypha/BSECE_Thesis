@@ -106,12 +106,12 @@
 
 //-------------------------------------FAN-------------------------
   #define FAN_PIN                     26
-  #define TEMPERATURE_THRESHOLD       29  //in °C
+  #define TEMPERATURE_THRESHOLD       30  //in °C
 
 void setup() {
   Serial.begin(115200); 
   Serial.println("Starting.......");
-  systemStatus |= 1<<4; //Forces bit 4 to 1. makes sure that thingspeak is notified whenever esp32 restarts
+  systemStatus |= 1<<3; //Forces bit 3 to 1. makes sure that thingspeak is notified whenever esp32 restarts
  //LED
   pinMode(PM_LED_SENT_OK, OUTPUT);
   pinMode(PM_LED_SENT_ERR, OUTPUT);
