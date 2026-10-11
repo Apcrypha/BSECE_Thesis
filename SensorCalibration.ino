@@ -24,6 +24,18 @@
   bool Cleaning_State = false;
 
   uint8_t overallStatus = 0;
+    /*  
+  ******Bit masking for Overall Status******
+          | BIT    |                MEANING               |
+          |  0     |              Fan Working             |
+          |  1     |            RRH62000 Connected        |
+          |  2     |             Gyro Connected           |
+          |  3     |                 -                    |
+          |  4     |                 -                    |
+          |  5     |                 -                    |
+          |  6     |                 -                    |
+          |  7     |                 -                    |
+  */
 
   uint8_t systemStatus = 0;  
   /*  
@@ -276,7 +288,7 @@ void checkTalkBackCommands() {
      
      //Restart ESP  
       if (command == "RESTART_ESP") {
-        ESP.restart(); // Software reset the ESP32
+        fullSystemReset();
       }
      //Restart RRH62000
       else if(command == "RESTART_RRH62000"){
@@ -301,7 +313,7 @@ void checkTalkBackCommands() {
         overallStatus = 0;
         
         // Pack booleans into Bits 0-2
-        if (digitalRead(FAN_LED_WORKING))   overallStatus |= (1 << 0);
+        if (digitalRead(FAN_PIN))   overallStatus |= (1 << 0);
         if (I2C_Connected(0x69))            overallStatus |= (1 << 1);  // default RRH62000 adress can be found in RRH62000.h
         if (I2C_Connected(IMU_ADDRESS))     overallStatus |= (1 << 2); 
 
@@ -356,6 +368,28 @@ bool I2C_Connected(uint8_t ADDRESS) {
   // 2: Address NACK (device disconnected/powered off)
   // 4: Other error / Bus hang
   return (Wire.endTransmission() == 0);
+}
+
+void fullSystemReset() {
+  //turn off all GPIO outputs & LEDs
+  digitalWrite(FAN_PIN, LOW);
+  digitalWrite(FAN_LED_WORKING, LOW);
+  digitalWrite(PM_LED_SENT_OK, LOW);
+  digitalWrite(PM_LED_SENT_ERR, LOW);
+  digitalWrite(STATUS_LED_SENT_OK, LOW);
+  digitalWrite(STATUS_LED_SENT_ERR, LOW);
+  digitalWrite(ESP32_LED_STATUS, LOW);
+  digitalWrite(GYRO_LED_DISCONNECTED, LOW);
+  digitalWrite(WiFi_LED_DISCONNECTED, LOW);
+
+  //Send reset commands before rebooting
+  RRH_sensor.resetModule(); // Sends 0x52 software reset to RRH62000 IC
+
+  //Set a 100-millisecond wake timer (100,000 microseconds)
+  esp_sleep_enable_timer_wakeup(100 * 1000);
+
+  //Enter Deep Sleep -> Triggers a full Power-On Reset (POR) boot
+  esp_deep_sleep_start();
 }
 
 void wifiConnect(){
