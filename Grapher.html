@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Monitoring Visualizer</title>
+  <!-- Chart.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #121212;
+      color: #e0e0e0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Top Navigation / Controls Bar */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      background-color: #1e1e1e;
+      border-bottom: 1px solid #333333;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+
+    .top-bar h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #0d6efd;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s ease, opacity 0.2s ease;
+    }
+
+    .btn:hover {
+      background-color: #0b5ed7;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-icon {
+      padding: 8px;
+      background-color: #343a40;
+      border-radius: 6px;
+    }
+
+    .btn-icon:hover {
+      background-color: #495057;
+    }
+
+    /* Main Chart Area */
+    .content-area {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 60px);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .view-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Radar View Layout */
+    .radar-wrapper {
+      width: 100%;
+      max-width: 650px;
+      height: calc(100% - 80px);
+      position: relative;
+    }
+
+    .slider-container {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 15px;
+      background-color: #1e1e1e;
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: 1px solid #333333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-info {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 13px;
+      color: #aaaaaa;
+    }
+
+    .time-slider {
+      width: 100%;
+      accent-color: #0d6efd;
+      cursor: pointer;
+    }
+
+    .status-msg {
+      font-size: 16px;
+      color: #888888;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Controls Bar -->
+  <header class="top-bar">
+    <h2>Air Monitoring System Visualizer</h2>
+    <div class="controls-group">
+      <!-- Cycle View Button -->
+      <button id="cycleBtn" class="btn btn-icon" title="Switch Graph View">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
+        </svg>
+      </button>
+
+      <!-- Fetch Data Button -->
+      <button id="fetchBtn" class="btn" onclick="fetchData()">
+        <span>Fetch 200 Entries</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Content Dashboard Body -->
+  <main class="content-area">
+    <div id="loadingMsg" class="status-msg">Click "Fetch 200 Entries" to display the graph data.</div>
+
+    <!-- View 1: Multi-Axis Line Chart -->
+    <div id="lineView" class="view-container hidden">
+      <canvas id="lineChartCanvas"></canvas>
+    </div>
+
+    <!-- View 2: Single Radar Chart + Time Slider -->
+    <div id="radarView" class="view-container hidden">
+      <div class="radar-wrapper">
+        <canvas id="radarChartCanvas"></canvas>
+      </div>
+      <div class="slider-container">
+        <div class="slider-info">
+          <span>Oldest</span>
+          <span id="currentTimeStamp" style="color: #ffffff; font-weight: bold;">--</span>
+          <span>Latest</span>
+        </div>
+        <input type="range" id="timeSlider" class="time-slider" min="0" max="0" value="0" oninput="updateRadarChart(this.value)">
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // --- Configuration & Constants ---
+    const CHANNEL_ID = "3506848";
+    const READ_API_KEY = "OTCFEBXIEKDKUKTD";
+
+    // High-Contrast Color Palette for 8 Fields
+    const FIELD_CONFIGS = [
+      { key: 'field1', label: 'Temperature (°C)',       color: '#e6194b', yAxisID: 'yTemp' },
+      { key: 'field2', label: 'Humidity (%RH)',          color: '#3cb44b', yAxisID: 'yHumidity' },
+      { key: 'field3', label: 'PM10(KCl) (µg/m³)',       color: '#f58231', yAxisID: 'yPM' },
+      { key: 'field4', label: 'PM10(Smoke) (µg/m³)',     color: '#911eb4', yAxisID: 'yPM' },
+      { key: 'field5', label: 'PM2.5(KCl) (µg/m³)',      color: '#42d4f4', yAxisID: 'yPM' },
+      { key: 'field6', label: 'PM2.5(Smoke) (µg/m³)',    color: '#f032e6', yAxisID: 'yPM' },
+      { key: 'field7', label: 'PM1(KCl) (µg/m³)',        color: '#bfef45', yAxisID: 'yPM' },
+      { key: 'field8', label: 'PM1(Smoke) (µg/m³)',      color: '#4363d8', yAxisID: 'yPM' }
+    ];
+
+    let rawFeeds = [];
+    let activeView = 0; // 0 = Line Chart, 1 = Radar Chart
+    let lineChartInstance = null;
+    let radarChartInstance = null;
+
+    // --- Switch Between Line and Radar Graph Views ---
+    document.getElementById("cycleBtn").addEventListener("click", () => {
+      if (rawFeeds.length === 0) return;
+      activeView = (activeView + 1) % 2;
+      renderActiveView();
+    });
+
+    function renderActiveView() {
+      const lineView = document.getElementById("lineView");
+      const radarView = document.getElementById("radarView");
+
+      if (activeView === 0) {
+        lineView.classList.remove("hidden");
+        radarView.classList.add("hidden");
+      } else {
+        lineView.classList.add("hidden");
+        radarView.classList.remove("hidden");
+        const slider = document.getElementById("timeSlider");
+        updateRadarChart(slider.value);
+      }
+    }
+
+    // --- Fetch Data from ThingSpeak Channel ---
+    function fetchData() {
+      const fetchBtn = document.getElementById("fetchBtn");
+      const loadingMsg = document.getElementById("loadingMsg");
+      
+      fetchBtn.disabled = true;
+      loadingMsg.innerText = "Fetching data from ThingSpeak...";
+      loadingMsg.classList.remove("hidden");
+
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=200`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data.feeds || data.feeds.length === 0) {
+            loadingMsg.innerText = "No data returned from ThingSpeak.";
+            fetchBtn.disabled = false;
+            return;
+          }
+
+          rawFeeds = data.feeds;
+          loadingMsg.classList.add("hidden");
+          fetchBtn.disabled = false;
+
+          initLineChart();
+          initRadarChart();
+          
+          // Show default Line Chart view
+          activeView = 0;
+          renderActiveView();
+        })
+        .catch(err => {
+          console.error("Fetch Error:", err);
+          loadingMsg.innerText = "Error fetching data. Please try again.";
+          fetchBtn.disabled = false;
+        });
+    }
+
+    // --- Build View 1: Multi-Axis Line Chart ---
+    function initLineChart() {
+      const ctx = document.getElementById("lineChartCanvas").getContext("2d");
+
+      if (lineChartInstance) {
+        lineChartInstance.destroy();
+      }
+
+      const labels = rawFeeds.map(f => {
+        const d = new Date(f.created_at);
+        return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
+      });
+
+      const datasets = FIELD_CONFIGS.map(cfg => {
+        return {
+          label: cfg.label,
+          data: rawFeeds.map(f => f[cfg.key] !== null ? parseFloat(f[cfg.key]) : null),
+          borderColor: cfg.color,
+          backgroundColor: cfg.color,
+          borderWidth: 2,
+          pointRadius: 2,
+          pointHoverRadius: 6,
+          tension: 0.2,
+          yAxisID: cfg.yAxisID
+        };
+      });
+
+      lineChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: 'index', // Hovering shows ALL entry values for that time
+            intersect: false
+          },
+          plugins: {
+            legend: {
+              labels: { color: '#ffffff', font: { size: 12 } }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(20, 20, 20, 0.9)',
+              titleColor: '#0dcaf0',
+              bodyColor: '#ffffff',
+              borderColor: '#444444',
+              borderWidth: 1,
+              padding: 10
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#aaaaaa', maxRotation: 45 },
+              grid: { color: '#222222' }
+            },
+            yTemp: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Temp (°C)', color: '#e6194b' },
+              ticks: { color: '#e6194b' },
+              grid: { color: '#222222' }
+            },
+            yHumidity: {
+              type: 'linear',
+              display: true,
+              position: 'left',
+              title: { display: true, text: 'Humidity (%RH)', color: '#3cb44b' },
+              ticks: { color: '#3cb44b' },
+              grid: { drawOnChartArea: false }
+            },
+            yPM: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              title: { display: true, text: 'PM Concentration (µg/m³)', color: '#42d4f4' },
+              ticks: { color: '#42d4f4' },
+              grid: { drawOnChartArea: false }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Build View 2: Radar Chart ---
+    function initRadarChart() {
+      const ctx = document.getElementById("radarChartCanvas").getContext("2d");
+
+      if (radarChartInstance) {
+        radarChartInstance.destroy();
+      }
+
+      const timeSlider = document.getElementById("timeSlider");
+      timeSlider.min = 0;
+      timeSlider.max = rawFeeds.length - 1;
+      timeSlider.value = rawFeeds.length - 1; // Default to latest feed
+
+      const radarLabels = FIELD_CONFIGS.map(c => c.label);
+
+      radarChartInstance = new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: radarLabels,
+          datasets: [{
+            label: 'Sensor Readings',
+            data: [],
+            backgroundColor: 'rgba(13, 110, 253, 0.3)',
+            borderColor: '#0d6efd',
+            pointBackgroundColor: '#0d6efd',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: '#0d6efd'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#ffffff' }
+            }
+          },
+          scales: {
+            r: {
+              angleLines: { color: '#333333' },
+              grid: { color: '#333333' },
+              pointLabels: { color: '#e0e0e0', font: { size: 11 } },
+              ticks: { color: '#aaaaaa', backdropColor: 'transparent' }
+            }
+          }
+        }
+      });
+    }
+
+    // --- Update Radar Chart via Time Slider ---
+    function updateRadarChart(index) {
+      if (!radarChartInstance || !rawFeeds[index]) return;
+
+      const feed = rawFeeds[index];
+      const timeDisplay = document.getElementById("currentTimeStamp");
+
+      const d = new Date(feed.created_at);
+      timeDisplay.innerText = d.toLocaleString();
+
+      const newValues = FIELD_CONFIGS.map(cfg => {
+        return feed[cfg.key] !== null ? parseFloat(feed[cfg.key]) : 0;
+      });
+
+      radarChartInstance.data.datasets[0].data = newValues;
+      radarChartInstance.update();
+    }
+  </script>
+</body>
+</html>
