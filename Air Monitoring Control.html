@@ -26,6 +26,11 @@
       text-align: center;
     }
 
+    /* Helper class to hide/show views */
+    .hidden {
+      display: none !important;
+    }
+
     /* Centered Title */
     h1.title {
       font-size: 20px;
@@ -33,6 +38,18 @@
       margin-top: 0;
       margin-bottom: 20px;
       text-align: center;
+    }
+
+    /* User Header Badge */
+    .user-badge {
+      font-size: 13px;
+      color: #333333;
+      margin-bottom: 15px;
+      font-weight: bold;
+      background-color: #e9ecef;
+      padding: 6px 14px;
+      border-radius: 15px;
+      display: inline-block;
     }
 
     /* Horizontal Button Row */
@@ -55,6 +72,10 @@
       cursor: pointer;
       transition: opacity 0.3s ease;
     }
+
+    /* Login Screen Button Styles */
+    .btn-user-1 { background-color: #0d6efd; width: 100%; margin-bottom: 12px; font-size: 15px; padding: 12px; }
+    .btn-user-2 { background-color: #6c757d; width: 100%; font-size: 15px; padding: 12px; }
 
     .btn-red    { background-color: #dc3545; }
     .btn-orange { background-color: #fd7e14; }
@@ -143,9 +164,30 @@
 </head>
 <body>
 
-  <div class="container">
+  <!-- 1. LOGIN MENU VIEW -->
+  <div id="loginView" class="container">
+    <h1 class="title">Select User to Access Controls</h1>
+    
+    <div style="max-width: 320px; margin: 0 auto;">
+      <!-- =================================================================== -->
+      <!-- WRITE USER 1 NAME HERE BELOW (Change 'User 1 Name' in parameter & label) -->
+      <!-- =================================================================== -->
+      <button class="control-btn btn-user-1" onclick="loginUser('Fortune Glester')">Fortune Glester</button>
+      
+      <!-- =================================================================== -->
+      <!-- WRITE USER 2 NAME HERE BELOW (Change 'User 2 Name' in parameter & label) -->
+      <!-- =================================================================== -->
+      <button class="control-btn btn-user-2" onclick="loginUser('Kenneth Zachary')">Kenneth Zachary</button>
+    </div>
+  </div>
+
+  <!-- 2. MAIN CONTROL VIEW (Hidden until user logs in) -->
+  <div id="mainView" class="container hidden">
     <!-- Centered Title -->
     <h1 class="title">Air Monitoring System Control</h1>
+    
+    <!-- User Logged-In Indicator -->
+    <div id="userBadge" class="user-badge">Logged in as: --</div>
 
     <!-- Top Row Buttons -->
     <div class="btn-row">
@@ -244,9 +286,41 @@
     const CHANNEL_ID       = "3498647";
     const READ_API_KEY     = "U3R0NVLJURQNSVYU";
 
-    let isCooldown = false;
+    // --- Audit Log Configuration (Channel 3531224) ---
+    const AUDIT_WRITE_KEY  = "AI2DOS72A3YQ75KK";
 
-    // --- Global 16-Second Rate Limiter & Translucency Helper ---
+    let currentUser = "";
+    let isCooldown  = false;
+
+    // --- User Login Handler ---
+    function loginUser(userName) {
+      currentUser = userName;
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("mainView").classList.remove("hidden");
+      document.getElementById("userBadge").innerText = "Logged in as: " + currentUser;
+
+      // Log login event (Field 1 = User, Field 2 = Action)
+      logUserAction("Logged in");
+    }
+
+    // --- Audit Logging Function (Writes User -> Field 1, Command -> Field 2) ---
+    function logUserAction(commandText) {
+      if (!currentUser) return;
+
+      const url = `https://api.thingspeak.com/update?api_key=${AUDIT_WRITE_KEY}&field1=${encodeURIComponent(currentUser)}&field2=${encodeURIComponent(commandText)}`;
+
+      fetch(url, { method: 'POST' })
+        .then(response => {
+          if (response.ok) {
+            console.log(`Audit log saved: User = ${currentUser}, Command = ${commandText}`);
+          } else {
+            console.error("Audit log failed with HTTP status:", response.status);
+          }
+        })
+        .catch(err => console.error("Error sending audit log:", err));
+    }
+
+    // --- Global Rate Limiter Helper ---
     function startCooldown(onTick, onComplete) {
       isCooldown = true;
 
@@ -294,6 +368,8 @@
       })
       .then(response => {
         if (response.ok) {
+          // Write User to Field 1 and Command to Field 2
+          logUserAction(commandStr);
           if (onSuccess) onSuccess();
         } else {
           alert(`TalkBack Error: Server returned HTTP status ${response.status}`);
@@ -401,7 +477,8 @@
 
     // --- Fetch 5 Latest NON-NULL Readings for Field 1 & Update Table 2 ---
     function fetchField1Logs() {
-      // Query up to 30 recent feeds to isolate valid Field 1 updates across channel noise
+      logUserAction("Get Status Logs");
+
       const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1.json?api_key=${READ_API_KEY}&results=30`;
 
       fetch(url)
@@ -409,18 +486,12 @@
         .then(data => {
           if (!data || !data.feeds) return;
 
-          // Filter out feeds where field1 is null or undefined
           const validFeeds = data.feeds.filter(f => f.field1 !== null && f.field1 !== undefined);
-
-          // Get only the 5 most recent valid Field 1 entries
           const feeds = validFeeds.slice(-5);
 
           const headerRow = document.getElementById("dateHeaderRow");
-
-          // Reset Header
           headerRow.innerHTML = "<td>Date</td>";
 
-          // Prepare empty table row data containers
           const rowData = {
             0: document.getElementById("rowBit0"),
             1: document.getElementById("rowBit1"),
@@ -437,14 +508,11 @@
             4: "Cleaning"
           };
 
-          // Clear existing rows except title column
           for (let bit = 0; bit <= 4; bit++) {
             rowData[bit].innerHTML = `<td>${rowTitles[bit]}</td>`;
           }
 
-          // Loop over the 5 valid feeds
           feeds.forEach(feed => {
-            // Format Timestamp (MM/DD HH:MM)
             const dateObj = new Date(feed.created_at);
             const dateStr = `${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getDate().toString().padStart(2, '0')} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
 
@@ -452,7 +520,6 @@
 
             const fieldVal = parseInt(feed.field1, 10) || 0;
 
-            // Evaluate Bitmask for Bits 0-4
             for (let bit = 0; bit <= 4; bit++) {
               const isSet = (fieldVal & (1 << bit)) !== 0;
               const cellText = isSet ? "Yes" : "No";
