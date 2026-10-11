@@ -247,7 +247,7 @@
     let isCooldown = false;
 
     // --- Global 16-Second Rate Limiter & Translucency Helper ---
-    function start16sCooldown(onTick, onComplete) {
+    function startCooldown(onTick, onComplete) {
       isCooldown = true;
 
       const buttons = document.querySelectorAll('.control-btn');
@@ -256,7 +256,7 @@
         btn.disabled = true;
       });
 
-      let secondsLeft = 16;
+      let secondsLeft = 17;
       if (onTick) onTick(secondsLeft);
 
       const countdownTimer = setInterval(() => {
@@ -308,19 +308,19 @@
     // --- Command Actions ---
     function sendRestartEsp() {
       sendTalkBackCommand("RESTART_ESP", () => {
-        start16sCooldown();
+        startCooldown();
       });
     }
 
     function sendRestartRrh() {
       sendTalkBackCommand("RESTART_RRH62000", () => {
-        start16sCooldown();
+        startCooldown();
       });
     }
 
     function sendManualCleaning() {
       sendTalkBackCommand("Clean", () => {
-        start16sCooldown();
+        startCooldown();
       });
     }
 
@@ -334,7 +334,7 @@
       }
 
       sendTalkBackCommand(`FAN_${val}`, () => {
-        start16sCooldown();
+        startCooldown();
       });
     }
 
@@ -342,7 +342,7 @@
       const btn = document.getElementById("overallStatusBtn");
 
       sendTalkBackCommand("Overall_Status", () => {
-        start16sCooldown(
+        startCooldown(
           (secondsLeft) => {
             btn.innerText = `Updating in ${secondsLeft}s`;
           },
@@ -356,7 +356,7 @@
 
     // --- Fetch Latest Channel Data & Update Table 1 ---
     function fetchLatestChannelData() {
-      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=5`;
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=10`;
 
       fetch(url)
         .then(res => res.json())
@@ -399,16 +399,22 @@
       }
     }
 
-    // --- Fetch 5 Latest Readings for Field 1 & Update Table 2 ---
+    // --- Fetch 5 Latest NON-NULL Readings for Field 1 & Update Table 2 ---
     function fetchField1Logs() {
-      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1.json?api_key=${READ_API_KEY}&results=5`;
+      // Query up to 30 recent feeds to isolate valid Field 1 updates across channel noise
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1.json?api_key=${READ_API_KEY}&results=30`;
 
       fetch(url)
         .then(res => res.json())
         .then(data => {
           if (!data || !data.feeds) return;
 
-          const feeds = data.feeds; // Array of up to 5 feeds
+          // Filter out feeds where field1 is null or undefined
+          const validFeeds = data.feeds.filter(f => f.field1 !== null && f.field1 !== undefined);
+
+          // Get only the 5 most recent valid Field 1 entries
+          const feeds = validFeeds.slice(-5);
+
           const headerRow = document.getElementById("dateHeaderRow");
 
           // Reset Header
@@ -436,7 +442,7 @@
             rowData[bit].innerHTML = `<td>${rowTitles[bit]}</td>`;
           }
 
-          // Loop over feeds (Up to 5)
+          // Loop over the 5 valid feeds
           feeds.forEach(feed => {
             // Format Timestamp (MM/DD HH:MM)
             const dateObj = new Date(feed.created_at);
