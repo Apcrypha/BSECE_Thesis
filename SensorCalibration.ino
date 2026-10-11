@@ -23,7 +23,7 @@
   int uploadStatus;
   bool Cleaning_State = false;
 
-  uint32_t overallStatus = 0;
+  uint8_t overallStatus = 0;
 
   uint8_t systemStatus = 0;  
   /*  
@@ -94,13 +94,15 @@
   #define PM_LED_SENT_ERR             14  //Red
   #define RRH_LED_DISCONNECTED        16  //Blue
 
+  #define GYRO_LED_DISCONNECTED       19  //Blue
+  #define WiFi_LED_DISCONNECTED       23  //Red
+  #define FAN_LED_WORKING             25  //Green
+
   #define STATUS_LED_SENT_OK          17  //Green
   #define STATUS_LED_SENT_ERR         18  //Red
   #define ESP32_LED_STATUS            27  //Blue
 
-  #define GYRO_LED_DISCONNECTED       19  //Blue
-  #define WiFi_LED_DISCONNECTED       23  //Red
-  #define FAN_LED_WORKING             25  //Green
+
 
 //-------------------------------------FAN-------------------------
   #define FAN_PIN                     26
@@ -294,17 +296,13 @@ void checkTalkBackCommands() {
      //Overall status
       else if (command = "Overall_Status") {
         overallStatus = 0;
+        
+        // Pack booleans into Bits 0-2
+        if (digitalRead(FAN_LED_WORKING))   overallStatus |= (1 << 0);
+        if (I2C_Connected(0x69))            overallStatus |= (1 << 1);  // default RRH62000 adress can be found in RRH62000.h
+        if (I2C_Connected(IMU_ADDRESS))     overallStatus |= (1 << 2); 
 
-        roll  = fabsf(roll);
-        roll  = constrain(roll, 0.0f, 180.0f);
-        roll  = lroundf(roll * 10.0f) / 10.0f; // e.g., -123.456f -> 123.5f
-
-        pitch = fabsf(pitch);
-        pitch = constrain(pitch, 0.0f, 180.0f);
-        pitch = lroundf(pitch * 10.0f) / 10.0f; // e.g., -89.189f -> 89.2f
-
-        getOverall_Status(roll, pitch);
-
+        sendOverall_Status();
       }
     }
   } else {Serial.printf("TalkBack check failed, HTTP Code: %d\n", httpCode);
@@ -312,23 +310,46 @@ void checkTalkBackCommands() {
   }
 }
 
-void getOverall_Status(float roll, float pitch){
-  // Pack booleans into Bits 0-2
-  if (digitalRead(FAN_LED_WORKING))   overallStatus |= (1 << 0);
-  if (RRH_sensor.readUniqueID())      overallStatus |= (1 << 1);  // if ID can be read then sensor is connected
-  if (IMU_Connected())                overallStatus |= (1 << 2);  // IMU.update() returns a zero when sucessfully updated
+void sendOverall_Status(){
+  if(currentMillis - lastStatusMillis >= THINGSPEAK_INTERVAL ){ 
+    lastStatusMillis = currentMillis;
 
-  // Convert 1-decimal floats to scaled integers (e.g., 123.5 -> 1235)
-  uint32_t rollPacked  = (uint32_t)lroundf(roll * 10.0f);
-  uint32_t pitchPacked = (uint32_t)lroundf(pitch * 10.0f);
+    ThingSpeak.setField(3, overallStatus); 
+    ThingSpeak.setField(4, roll); 
+    ThingSpeak.setField(5, pitch); 
+    uploadStatus = ThingSpeak.writeFields(STATUS_CHANNEL_ID, STATUS_WRITE_API_KEY);
 
-  overallStatus |= ((rollPacked & 0x7FFUL) << 3);     // Shift Roll into Bits 3-13 (11 bits, mask 0x7FF)
-  overallStatus |= ((pitchPacked & 0x7FFUL) << 14);   // Shift Pitch into Bits 14-24 (11 bits, mask 0x7FF)
+    while ( uploadStatus != 200){
+      Send_index ++;
+        
+      digitalWrite(STATUS_LED_SENT_ERR, HIGH);
+      Serial.println("Problem updating Status channel: Field 3. HTTP error code " + String(uploadStatus));
+      WiFi.reconnect();
+      delay(3000);
+      uploadStatus = ThingSpeak.writeFields(STATUS_CHANNEL_ID, STATUS_WRITE_API_KEY);
 
+      if(Send_index >= SEND_TIMEOUT){
+        break;
+      }
+    }
+    digitalWrite(STATUS_LED_SENT_ERR, LOW);
+
+    if(Send_index >= SEND_TIMEOUT){
+      Send_index = 0;
+      Serial.println("Status Channel update Skipped");
+    } else {
+      Send_index = 0;
+      digitalWrite(STATUS_LED_SENT_OK, HIGH);
+      delay(200);
+      digitalWrite(STATUS_LED_SENT_OK, LOW);
+      Serial.println("Status Channel update successful."); 
+    }
+    client.stop();
+  }
 }
 
-bool IMU_Connected() {
-  Wire.beginTransmission(IMU_ADDRESS);
+bool I2C_Connected(uint8_t ADDRESS) {
+  Wire.beginTransmission(ADDRESS);
   // endTransmission() returns:
   // 0: Success (ACK received - device is connected)
   // 2: Address NACK (device disconnected/powered off)
