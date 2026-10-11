@@ -22,7 +22,7 @@
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       width: 100%;
-      max-width: 480px;
+      max-width: 650px;
       text-align: center;
     }
 
@@ -61,6 +61,7 @@
     .btn-purple { background-color: #6f42c1; }
     .btn-blue   { background-color: #007bff; }
     .btn-green  { background-color: #28a745; width: 100%; margin-bottom: 15px; }
+    .btn-dark   { background-color: #343a40; width: 100%; margin-bottom: 15px; }
 
     /* Translucent & Non-clickable state during 16s cooldown */
     .control-btn.disabled, .control-btn:disabled {
@@ -99,10 +100,10 @@
       margin-top: 5px;
     }
 
-    .status-table td {
+    .status-table td, .status-table th {
       border: 1px solid #dddddd;
-      padding: 10px;
-      font-size: 14px;
+      padding: 8px 5px;
+      font-size: 12px;
       text-align: center;
     }
 
@@ -110,10 +111,10 @@
       font-weight: bold;
       text-align: left;
       background-color: #f8f9fa;
-      width: 60%;
+      width: 30%;
     }
 
-    /* Yes/No Cell Color Formatting */
+    /* Table 1 Color Formatting (Yes=Green, No=Red) */
     .cell-yes {
       background-color: #28a745 !important;
       color: #000000 !important;
@@ -122,6 +123,19 @@
 
     .cell-no {
       background-color: #dc3545 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+
+    /* Table 2 Alarm Color Formatting (Yes=Red with Black & Bold, No=Green with Black & Bold) */
+    .cell-alarm-yes {
+      background-color: #dc3545 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+
+    .cell-alarm-no {
+      background-color: #28a745 !important;
       color: #000000 !important;
       font-weight: bold !important;
     }
@@ -151,7 +165,7 @@
 
     <hr class="divider">
 
-    <!-- Overall Status & Table Section -->
+    <!-- Overall Status & Table 1 Section -->
     <div>
       <button id="overallStatusBtn" class="control-btn btn-green" onclick="sendOverallStatus()">Get Overall Status</button>
 
@@ -178,6 +192,48 @@
         </tr>
       </table>
     </div>
+
+    <hr class="divider">
+
+    <!-- Field 1 Logs & Table 2 Section -->
+    <div>
+      <button class="control-btn btn-dark" onclick="fetchField1Logs()">Get 5 Latest Status Logs</button>
+
+      <table class="status-table" id="historyTable">
+        <thead>
+          <tr id="dateHeaderRow">
+            <td>Date</td>
+            <th>#1</th>
+            <th>#2</th>
+            <th>#3</th>
+            <th>#4</th>
+            <th>#5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="rowBit0">
+            <td>System Capsized</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit1">
+            <td>Fan Malfunction</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit2">
+            <td>Extreme particle concentration</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit3">
+            <td>Restart Notification</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit4">
+            <td>Cleaning</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -191,7 +247,7 @@
     let isCooldown = false;
 
     // --- Global 16-Second Rate Limiter & Translucency Helper ---
-    function startCooldown(onTick, onComplete) {
+    function start16sCooldown(onTick, onComplete) {
       isCooldown = true;
 
       const buttons = document.querySelectorAll('.control-btn');
@@ -200,7 +256,7 @@
         btn.disabled = true;
       });
 
-      let secondsLeft = 17;
+      let secondsLeft = 16;
       if (onTick) onTick(secondsLeft);
 
       const countdownTimer = setInterval(() => {
@@ -252,19 +308,19 @@
     // --- Command Actions ---
     function sendRestartEsp() {
       sendTalkBackCommand("RESTART_ESP", () => {
-        startCooldown();
+        start16sCooldown();
       });
     }
 
     function sendRestartRrh() {
       sendTalkBackCommand("RESTART_RRH62000", () => {
-        startCooldown();
+        start16sCooldown();
       });
     }
 
     function sendManualCleaning() {
       sendTalkBackCommand("Clean", () => {
-        startCooldown();
+        start16sCooldown();
       });
     }
 
@@ -278,7 +334,7 @@
       }
 
       sendTalkBackCommand(`FAN_${val}`, () => {
-        startCooldown();
+        start16sCooldown();
       });
     }
 
@@ -286,7 +342,7 @@
       const btn = document.getElementById("overallStatusBtn");
 
       sendTalkBackCommand("Overall_Status", () => {
-        startCooldown(
+        start16sCooldown(
           (secondsLeft) => {
             btn.innerText = `Updating in ${secondsLeft}s`;
           },
@@ -298,7 +354,7 @@
       });
     }
 
-    // --- Fetch Latest Channel Data & Update Table ---
+    // --- Fetch Latest Channel Data & Update Table 1 ---
     function fetchLatestChannelData() {
       const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=5`;
 
@@ -341,6 +397,68 @@
         cell.innerText = "No";
         cell.className = "cell-no";
       }
+    }
+
+    // --- Fetch 5 Latest Readings for Field 1 & Update Table 2 ---
+    function fetchField1Logs() {
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1.json?api_key=${READ_API_KEY}&results=5`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data.feeds) return;
+
+          const feeds = data.feeds; // Array of up to 5 feeds
+          const headerRow = document.getElementById("dateHeaderRow");
+
+          // Reset Header
+          headerRow.innerHTML = "<td>Date</td>";
+
+          // Prepare empty table row data containers
+          const rowData = {
+            0: document.getElementById("rowBit0"),
+            1: document.getElementById("rowBit1"),
+            2: document.getElementById("rowBit2"),
+            3: document.getElementById("rowBit3"),
+            4: document.getElementById("rowBit4")
+          };
+
+          const rowTitles = {
+            0: "System Capsized",
+            1: "Fan Malfunction",
+            2: "Extreme particle concentration",
+            3: "Restart Notification",
+            4: "Cleaning"
+          };
+
+          // Clear existing rows except title column
+          for (let bit = 0; bit <= 4; bit++) {
+            rowData[bit].innerHTML = `<td>${rowTitles[bit]}</td>`;
+          }
+
+          // Loop over feeds (Up to 5)
+          feeds.forEach(feed => {
+            // Format Timestamp (MM/DD HH:MM)
+            const dateObj = new Date(feed.created_at);
+            const dateStr = `${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getDate().toString().padStart(2, '0')} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+
+            headerRow.innerHTML += `<th>${dateStr}</th>`;
+
+            const fieldVal = parseInt(feed.field1, 10) || 0;
+
+            // Evaluate Bitmask for Bits 0-4
+            for (let bit = 0; bit <= 4; bit++) {
+              const isSet = (fieldVal & (1 << bit)) !== 0;
+              const cellText = isSet ? "Yes" : "No";
+              const cellClass = isSet ? "cell-alarm-yes" : "cell-alarm-no";
+
+              rowData[bit].innerHTML += `<td class="${cellClass}">${cellText}</td>`;
+            }
+          });
+        })
+        .catch(err => {
+          console.error("Failed to fetch Field 1 status logs:", err);
+        });
     }
   </script>
 </body>
