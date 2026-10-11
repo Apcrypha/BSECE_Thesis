@@ -26,10 +26,10 @@
   uint8_t overallStatus = 0;
     /*  
   ******Bit masking for Overall Status******
-          | BIT    |                MEANING               |
-          |  0     |              Fan Working             |
-          |  1     |            RRH62000 Connected        |
-          |  2     |             Gyro Connected           |
+          | BIT    |               MEANING                |
+          |  0     |             Fan Working              |
+          |  1     |           RRH62000 Connected         |
+          |  2     |            Gyro Connected            |
           |  3     |                 -                    |
           |  4     |                 -                    |
           |  5     |                 -                    |
@@ -45,7 +45,7 @@
           |  1     |            Fan Malfunction           |
           |  2     |    Extreme particle concentration    |
           |  3     |         Restart Notification         |   Goes high whenever the esp32 restarts
-          |  4     |                 -                    |
+          |  4     |              Cleaning                |
           |  5     |                 -                    |
           |  6     |                 -                    |
           |  7     |                 -                    |
@@ -80,7 +80,7 @@
   float roll = 0.0;   //Y axis in degrees
 
   //in degrees
-  #define TILT_THRESHOLD              40.0f
+  #define TILT_THRESHOLD              45.0f
 
 //-------------------------------------Timing----------------------
   unsigned long lastSampleMicros = 0; //For gyro
@@ -307,13 +307,14 @@ void checkTalkBackCommands() {
         lastCleaningMillis = millis();
         RRH_sensor.triggerManualCleaning();
         Cleaning_State = true;
+        systemStatus |= 1<<4; //Forces bit 4 to 1
       }
      //Overall status
       else if (command == "Overall_Status") {
         overallStatus = 0;
         
         // Pack booleans into Bits 0-2
-        if (digitalRead(FAN_PIN))   overallStatus |= (1 << 0);
+        if (digitalRead(FAN_LED_WORKING))   overallStatus |= (1 << 0);
         if (I2C_Connected(0x69))            overallStatus |= (1 << 1);  // default RRH62000 adress can be found in RRH62000.h
         if (I2C_Connected(IMU_ADDRESS))     overallStatus |= (1 << 2); 
 
