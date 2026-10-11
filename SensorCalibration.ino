@@ -260,6 +260,8 @@ void loop() {
 }
 
 void checkTalkBackCommands() {
+  if (WiFi.status() != WL_CONNECTED) return;
+
   HTTPClient http;
 
   http.begin(TALKBACK_URL);
@@ -270,6 +272,8 @@ void checkTalkBackCommands() {
     command.trim(); // Clean whitespace or newlines
       
     if (command.length() > 0) {
+      http.end(); //must clost the socket immediately
+     
      //Restart ESP  
       if (command == "RESTART_ESP") {
         ESP.restart(); // Software reset the ESP32
@@ -285,16 +289,15 @@ void checkTalkBackCommands() {
         String valueStr = command.substring(4); // Extract substring starting right after "FAN_" (Index 4 to end)
         int fanSpeed = valueStr.toInt(); // Converts string to integer
         RRH_sensor.setFanSpeed(fanSpeed);
-        Serial.printf("Fan speed updated to %d%%\n", fanSpeed);
       }
      //Manual Cleaning
-      else if(command = "Clean"){
+      else if(command == "Clean"){
         lastCleaningMillis = millis();
         RRH_sensor.triggerManualCleaning();
         Cleaning_State = true;
       }
      //Overall status
-      else if (command = "Overall_Status") {
+      else if (command == "Overall_Status") {
         overallStatus = 0;
         
         // Pack booleans into Bits 0-2
@@ -305,9 +308,7 @@ void checkTalkBackCommands() {
         sendOverall_Status();
       }
     }
-  } else {Serial.printf("TalkBack check failed, HTTP Code: %d\n", httpCode);
-    http.end();
-  }
+  } else Serial.printf("TalkBack check failed, HTTP Code: %d\n", httpCode);
 }
 
 void sendOverall_Status(){
@@ -323,7 +324,7 @@ void sendOverall_Status(){
       Send_index ++;
         
       digitalWrite(STATUS_LED_SENT_ERR, HIGH);
-      Serial.println("Problem updating Status channel: Field 3. HTTP error code " + String(uploadStatus));
+      Serial.println("Problem updating Status channel: Field 3-5. HTTP error code " + String(uploadStatus));
       WiFi.reconnect();
       delay(3000);
       uploadStatus = ThingSpeak.writeFields(STATUS_CHANNEL_ID, STATUS_WRITE_API_KEY);
