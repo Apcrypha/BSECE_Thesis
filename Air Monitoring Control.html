@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Air Monitoring System Control</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+    }
+
+    /* Helper class to hide/show views */
+    .hidden {
+      display: none !important;
+    }
+
+    /* Centered Title */
+    h1.title {
+      font-size: 20px;
+      color: #222222;
+      margin-top: 0;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    /* User Header Badge */
+    .user-badge {
+      font-size: 13px;
+      color: #333333;
+      margin-bottom: 15px;
+      font-weight: bold;
+      background-color: #e9ecef;
+      padding: 6px 14px;
+      border-radius: 15px;
+      display: inline-block;
+    }
+
+    /* Horizontal Button Row */
+    .btn-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+    }
+
+    /* Control Button Base Rules */
+    .control-btn {
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Login Screen Button Styles */
+    .btn-user-1 { background-color: #1d0dfd; width: 100%; margin-bottom: 12px; font-size: 15px; padding: 12px; }
+    .btn-user-2 { background-color: #1d0dfd; width: 100%; font-size: 15px; padding: 12px; }
+
+    .btn-red    { background-color: #dc3545; }
+    .btn-orange { background-color: #fd7e14; }
+    .btn-purple { background-color: #6f42c1; }
+    .btn-blue   { background-color: #007bff; }
+    .btn-green  { background-color: #28a745; width: 100%; margin-bottom: 15px; }
+    .btn-dark   { background-color: #343a40; width: 100%; margin-bottom: 15px; }
+
+    /* Translucent & Non-clickable state during 16s cooldown */
+    .control-btn.disabled, .control-btn:disabled {
+      opacity: 0.35 !important;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+    }
+
+    .divider {
+      border: 0;
+      border-top: 1px solid #e0e0e0;
+      margin: 20px 0;
+    }
+
+    /* Fan Input Section */
+    .fan-control {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fan-input {
+      width: 75px;
+      padding: 8px;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #cccccc;
+      border-radius: 5px;
+    }
+
+    /* Table Styling */
+    .status-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 5px;
+    }
+
+    .status-table td, .status-table th {
+      border: 1px solid #dddddd;
+      padding: 8px 5px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .status-table td:first-child {
+      font-weight: bold;
+      text-align: left;
+      background-color: #f8f9fa;
+      width: 30%;
+    }
+
+    /* Table 1 Color Formatting (Yes=Green, No=Red) */
+    .cell-yes {
+      background-color: #28a745 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+
+    .cell-no {
+      background-color: #dc3545 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+
+    /* Table 2 Alarm Color Formatting (Yes=Red with Black & Bold, No=Green with Black & Bold) */
+    .cell-alarm-yes {
+      background-color: #dc3545 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+
+    .cell-alarm-no {
+      background-color: #28a745 !important;
+      color: #000000 !important;
+      font-weight: bold !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. LOGIN MENU VIEW -->
+  <div id="loginView" class="container">
+    <h1 class="title">Select User to Access Controls</h1>
+    
+    <div style="max-width: 320px; margin: 0 auto;">
+      <!-- =================================================================== -->
+      <!-- WRITE USER 1 NAME HERE BELOW (Change 'User 1 Name' in parameter & label) -->
+      <!-- =================================================================== -->
+      <button class="control-btn btn-user-1" onclick="loginUser('Fortune Glester')">Fortune Glester</button>
+      
+      <!-- =================================================================== -->
+      <!-- WRITE USER 2 NAME HERE BELOW (Change 'User 2 Name' in parameter & label) -->
+      <!-- =================================================================== -->
+      <button class="control-btn btn-user-2" onclick="loginUser('Kenneth Zachary')">Kenneth Zachary</button>
+    </div>
+  </div>
+
+  <!-- 2. MAIN CONTROL VIEW (Hidden until user logs in) -->
+  <div id="mainView" class="container hidden">
+    <!-- Centered Title -->
+    <h1 class="title">Air Monitoring System Control</h1>
+    
+    <!-- User Logged-In Indicator -->
+    <div id="userBadge" class="user-badge">Logged in as: --</div>
+
+    <!-- Top Row Buttons -->
+    <div class="btn-row">
+      <button class="control-btn btn-red" onclick="sendRestartEsp()">Restart ESP32</button>
+      <button class="control-btn btn-orange" onclick="sendRestartRrh()">Restart RRH62000</button>
+      <button class="control-btn btn-purple" onclick="sendManualCleaning()">Manual Cleaning</button>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Fan Speed Section -->
+    <div class="fan-control">
+      <label for="fanSpeed"><b>Fan Speed:</b></label>
+      <input type="number" id="fanSpeed" class="fan-input" min="60" max="100" value="70" placeholder="60-100">
+      <button class="control-btn btn-blue" onclick="sendFanSpeed()">Set Fan Speed</button>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Overall Status & Table 1 Section -->
+    <div>
+      <button id="overallStatusBtn" class="control-btn btn-green" onclick="sendOverallStatus()">Get Overall Status</button>
+
+      <table class="status-table">
+        <tr>
+          <td>Fan Working</td>
+          <td id="fanWorkingCell">--</td>
+        </tr>
+        <tr>
+          <td>RRH62000 Working</td>
+          <td id="rrhWorkingCell">--</td>
+        </tr>
+        <tr>
+          <td>Gyro Connected</td>
+          <td id="gyroConnectedCell">--</td>
+        </tr>
+        <tr>
+          <td>Roll</td>
+          <td id="rollCell">--°</td>
+        </tr>
+        <tr>
+          <td>Pitch</td>
+          <td id="pitchCell">--°</td>
+        </tr>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Field 1 Logs & Table 2 Section -->
+    <div>
+      <button class="control-btn btn-dark" onclick="fetchField1Logs()">Get 5 Latest Status Logs</button>
+
+      <table class="status-table" id="historyTable">
+        <thead>
+          <tr id="dateHeaderRow">
+            <td>Date</td>
+            <th>#1</th>
+            <th>#2</th>
+            <th>#3</th>
+            <th>#4</th>
+            <th>#5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="rowBit0">
+            <td>System Capsized</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit1">
+            <td>Fan Malfunction</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit2">
+            <td>Extreme particle concentration</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit3">
+            <td>Restart Notification</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit4">
+            <td>Cleaning</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // --- Configuration Constants ---
+    const TALKBACK_ID      = "57954";
+    const TALKBACK_API_KEY = "3R1GNZ8OKY0ZIXYI";
+    
+    const CHANNEL_ID       = "3498647";
+    const READ_API_KEY     = "U3R0NVLJURQNSVYU";
+
+    // --- Audit Log Configuration (Channel 3531224) ---
+    const AUDIT_WRITE_KEY  = "AI2DOS72A3YQ75KK";
+
+    let currentUser = "";
+    let isCooldown  = false;
+
+    // --- User Login Handler ---
+    function loginUser(userName) {
+      currentUser = userName;
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("mainView").classList.remove("hidden");
+      document.getElementById("userBadge").innerText = "Logged in as: " + currentUser;
+
+      // Log login event (Field 1 = User, Field 2 = Action)
+      logUserAction("Logged in");
+    }
+
+    // --- Audit Logging Function (Writes User -> Field 1, Command -> Field 2) ---
+    function logUserAction(commandText) {
+      if (!currentUser) return;
+
+      const url = `https://api.thingspeak.com/update?api_key=${AUDIT_WRITE_KEY}&field1=${encodeURIComponent(currentUser)}&field2=${encodeURIComponent(commandText)}`;
+
+      fetch(url, { method: 'POST' })
+        .then(response => {
+          if (response.ok) {
+            console.log(`Audit log saved: User = ${currentUser}, Command = ${commandText}`);
+          } else {
+            console.error("Audit log failed with HTTP status:", response.status);
+          }
+        })
+        .catch(err => console.error("Error sending audit log:", err));
+    }
+
+    // --- Global Rate Limiter Helper ---
+    function startCooldown(onTick, onComplete) {
+      isCooldown = true;
+
+      const buttons = document.querySelectorAll('.control-btn');
+      buttons.forEach(btn => {
+        btn.classList.add('disabled');
+        btn.disabled = true;
+      });
+
+      let secondsLeft = 17;
+      if (onTick) onTick(secondsLeft);
+
+      const countdownTimer = setInterval(() => {
+        secondsLeft--;
+        if (onTick) onTick(secondsLeft);
+
+        if (secondsLeft <= 0) {
+          clearInterval(countdownTimer);
+          isCooldown = false;
+
+          buttons.forEach(btn => {
+            btn.classList.remove('disabled');
+            btn.disabled = false;
+          });
+
+          if (onComplete) onComplete();
+        }
+      }, 1000);
+    }
+
+    // --- Post TalkBack Command to ThingSpeak ---
+    function sendTalkBackCommand(commandStr, onSuccess) {
+      if (isCooldown) return;
+
+      const url = `https://api.thingspeak.com/talkbacks/${TALKBACK_ID}/commands.json`;
+      const payload = new URLSearchParams({
+        api_key: TALKBACK_API_KEY,
+        command_string: commandStr
+      });
+
+      fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: payload
+      })
+      .then(response => {
+        if (response.ok) {
+          // Write User to Field 1 and Command to Field 2
+          logUserAction(commandStr);
+          if (onSuccess) onSuccess();
+        } else {
+          alert(`TalkBack Error: Server returned HTTP status ${response.status}`);
+        }
+      })
+      .catch(err => {
+        alert("Network Error: Unable to communicate with ThingSpeak.");
+        console.error(err);
+      });
+    }
+
+    // --- Command Actions ---
+    function sendRestartEsp() {
+      sendTalkBackCommand("RESTART_ESP", () => {
+        startCooldown();
+      });
+    }
+
+    function sendRestartRrh() {
+      sendTalkBackCommand("RESTART_RRH62000", () => {
+        startCooldown();
+      });
+    }
+
+    function sendManualCleaning() {
+      sendTalkBackCommand("Clean", () => {
+        startCooldown();
+      });
+    }
+
+    function sendFanSpeed() {
+      const input = document.getElementById("fanSpeed");
+      const val = parseInt(input.value, 10);
+
+      if (isNaN(val) || val < 60 || val > 100) {
+        alert("Invalid Fan Speed! Input must be a whole number between 60 and 100.");
+        return;
+      }
+
+      sendTalkBackCommand(`FAN_${val}`, () => {
+        startCooldown();
+      });
+    }
+
+    function sendOverallStatus() {
+      const btn = document.getElementById("overallStatusBtn");
+
+      sendTalkBackCommand("Overall_Status", () => {
+        startCooldown(
+          (secondsLeft) => {
+            btn.innerText = `Updating in ${secondsLeft}s`;
+          },
+          () => {
+            btn.innerText = "Get Overall Status";
+            fetchLatestChannelData();
+          }
+        );
+      });
+    }
+
+    // --- Fetch Latest Channel Data & Update Table 1 ---
+    function fetchLatestChannelData() {
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=10`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data.feeds || data.feeds.length === 0) return;
+
+          const feeds = data.feeds.reverse();
+          const validFeed = feeds.find(f => f.field3 !== null && f.field3 !== undefined) || feeds[0];
+
+          const bitmask = parseInt(validFeed.field3, 10) || 0;
+          const roll    = parseFloat(validFeed.field4);
+          const pitch   = parseFloat(validFeed.field5);
+
+          const isFanWorking     = (bitmask & (1 << 0)) !== 0;
+          const isRrhWorking     = (bitmask & (1 << 1)) !== 0;
+          const isGyroConnected  = (bitmask & (1 << 2)) !== 0;
+
+          renderStatusCell("fanWorkingCell", isFanWorking);
+          renderStatusCell("rrhWorkingCell", isRrhWorking);
+          renderStatusCell("gyroConnectedCell", isGyroConnected);
+
+          document.getElementById("rollCell").innerText  = isNaN(roll) ? "--°" : `${roll.toFixed(1)}°`;
+          document.getElementById("pitchCell").innerText = isNaN(pitch) ? "--°" : `${pitch.toFixed(1)}°`;
+        })
+        .catch(err => {
+          console.error("Failed to read channel feed:", err);
+        });
+    }
+
+    function renderStatusCell(cellId, isWorking) {
+      const cell = document.getElementById(cellId);
+      if (!cell) return;
+
+      if (isWorking) {
+        cell.innerText = "Yes";
+        cell.className = "cell-yes";
+      } else {
+        cell.innerText = "No";
+        cell.className = "cell-no";
+      }
+    }
+
+    // --- Fetch 5 Latest NON-NULL Readings for Field 1 & Update Table 2 ---
+    function fetchField1Logs() {
+      logUserAction("Get Status Logs");
+
+      const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/fields/1.json?api_key=${READ_API_KEY}&results=30`;
+
+      fetch(url)
+        .then(res => res.json())
+        .then(data => {
+          if (!data || !data.feeds) return;
+
+          const validFeeds = data.feeds.filter(f => f.field1 !== null && f.field1 !== undefined);
+          const feeds = validFeeds.slice(-5);
+
+          const headerRow = document.getElementById("dateHeaderRow");
+          headerRow.innerHTML = "<td>Date</td>";
+
+          const rowData = {
+            0: document.getElementById("rowBit0"),
+            1: document.getElementById("rowBit1"),
+            2: document.getElementById("rowBit2"),
+            3: document.getElementById("rowBit3"),
+            4: document.getElementById("rowBit4")
+          };
+
+          const rowTitles = {
+            0: "System Capsized",
+            1: "Fan Malfunction",
+            2: "Extreme particle concentration",
+            3: "Restart Notification",
+            4: "Cleaning"
+          };
+
+          for (let bit = 0; bit <= 4; bit++) {
+            rowData[bit].innerHTML = `<td>${rowTitles[bit]}</td>`;
+          }
+
+          feeds.forEach(feed => {
+            const dateObj = new Date(feed.created_at);
+            const dateStr = `${(dateObj.getMonth() + 1).toString().padStart(2, '0')}/${dateObj.getDate().toString().padStart(2, '0')} ${dateObj.getHours().toString().padStart(2, '0')}:${dateObj.getMinutes().toString().padStart(2, '0')}`;
+
+            headerRow.innerHTML += `<th>${dateStr}</th>`;
+
+            const fieldVal = parseInt(feed.field1, 10) || 0;
+
+            for (let bit = 0; bit <= 4; bit++) {
+              const isSet = (fieldVal & (1 << bit)) !== 0;
+              const cellText = isSet ? "Yes" : "No";
+              const cellClass = isSet ? "cell-alarm-yes" : "cell-alarm-no";
+
+              rowData[bit].innerHTML += `<td class="${cellClass}">${cellText}</td>`;
+            }
+          });
+        })
+        .catch(err => {
+          console.error("Failed to fetch Field 1 status logs:", err);
+        });
+    }
+  </script>
+</body>
+</html>
