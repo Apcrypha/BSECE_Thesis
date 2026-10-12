@@ -1,0 +1,136 @@
+<svg viewBox="434.016 350.064 193.248 438.76800000000003" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="193.248" height="438.76800000000003">
+<defs>
+<clipPath id="clip_1">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_2">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_3">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_4">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_5">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_6">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_7">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_8">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_9">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_10">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_11">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_12">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_13">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_14">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_15">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+<clipPath id="clip_16">
+<path clip-rule="evenodd" d="M.000017703 0H1188V792H.000017703Z" transform="matrix(1,0,0,-1,0,792)"/>
+</clipPath>
+</defs>
+<g>
+<path fill-rule="evenodd" fill="#ffffff" d="M506.96 403.14H551.96C559.42 403.14 565.46 409.18 565.46 416.64 565.46 424.09 559.42 430.14 551.96 430.14H506.96C499.5 430.14 493.46 424.09 493.46 416.64 493.46 409.18 499.5 403.14 506.96 403.14Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M506.96 403.14H551.96C559.42 403.14 565.46 409.18 565.46 416.64 565.46 424.09 559.42 430.14 551.96 430.14H506.96C499.5 430.14 493.46 424.09 493.46 416.64 493.46 409.18 499.5 403.14 506.96 403.14Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_1)">
+<text font-family="Calibri" font-size="14.275" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="516.08 522.8464 527.3715 534.1521 538.6773" y="-412.07">Start</tspan></text>
+</g>
+<path fill-rule="evenodd" fill="#ffffff" d="M487.36 359.39H559.36L571.56 383.77H499.56L487.36 359.39Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M487.36 359.39H559.36L571.56 383.77H499.56L487.36 359.39Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_2)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="518.63 520.89877 526.9212 531.43399 535.21249 538.232 541.25149" y="-373.58">Import </tspan></text>
+</g>
+<g clip-path="url(#clip_3)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="517.25 522.4887 526.24246 528.4947 532.2484 535.99398 539.74777" y="-363.97">Dataset</tspan></text>
+</g>
+<path d="M529.46 403.14V390.81" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.48 391.81 529.46 383.77 525.44 391.81H533.48Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M529.46 359.39V352.64H529.47V347.05" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.49 348.06 529.47 340.02 525.45 348.06H533.49Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" fill="#ffffff" d="M442.31 315.63H616.61V340.016H442.31Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M442.31 315.63H616.61V340.016H442.31Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_4)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="446.1 448.35224 452.8402 455.09248 458.08723 461.84098 463.34248 467.83045 469.33195 473.81993 475.3214 479.8094 483.5631 485.80714 488.80189 492.55564 496.3094 500.79737 504.55113 508.2966 511.2996 515.02859 517.2973 520.3003 524.78829 528.55026 531.5532 533.79727 536.80026 540.554 545.042 548.7957 551.79049 555.5442 558.5472 562.30099 565.2957 567.5397 570.54269 573.54568 577.27468 580.2941 583.2889 584.79037 589.2783 592.2731 596.02688 600.51486 604.26858 608.75656 611.0088" y="-329.77">f_train = pd.read_csv("Basic_dataset.csv").dropna()</tspan></text>
+</g>
+<g clip-path="url(#clip_5)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="445.03 449.54273 451.8197 455.5982 458.6177 462.3962 465.42396 468.44346 469.9697 474.48243 476.00868 480.5214 484.29988 486.56864 489.58815 493.36665 497.14515 501.65788 505.43638 508.4641 512.2344 515.26217 518.2817 521.3094 528.08267 531.86117 534.8806 538.65908 542.43759 546.9503 550.72879 553.7482 557.5267 560.55447 564.33297 567.3524 568.87869 572.6489 575.6767 579.44699 582.4747 584.75167 587.0204 591.53317 593.8102 598.32296 602.8357 606.6142 610.39266 613.4122" y="-320.18">df_test = pd.read_csv("Meta_dataset.csv").dropna()</tspan></text>
+</g>
+<path fill-rule="evenodd" fill="#ffffff" d="M493.46 156.18H565.45999V180.566H493.46Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M493.46 156.18H565.46V180.57H493.46V156.18ZM502.46 156.18V180.57M556.46 156.18V180.57" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_6)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="514.42 518.17379 521.1685 524.92227 526.42379 530.91177 532.41329 536.893 540.67977" y="-165.38">Train RFR</tspan></text>
+</g>
+<path d="M529.46 156.18V143.85" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.48 144.85 529.46 136.81 525.44 144.85H533.48Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" fill="#ffffff" d="M493.46 112.42H565.45999V136.806H493.46Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M493.46 112.42H565.46V136.81H493.46V112.42ZM502.46 112.42V136.81M556.46 112.42V136.81" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_7)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="514.33 518.0838 521.07858 524.8323 526.3338 530.8218 532.3233 536.077 540.57327" y="-121.57">Train SVR</tspan></text>
+</g>
+<path fill-rule="evenodd" fill="#ffffff" d="M442.31 271.88H616.61V296.281H442.31Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M442.31 271.88H616.61V296.281H442.31Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_8)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="444.57 446.847 451.3597 455.1382 457.41523 461.92796 464.94746 468.72596 472.50447 476.2747 480.0532 482.32194 485.34968 486.87593 491.38865 492.9149 495.1919 497.46064 499.73765 504.25038 510.27287 514.78567 516.3119 518.5806 520.1069 521.6331 526.1459 531.4094 532.93569 535.2044 536.73068 538.9994 542.7779 549.55117 554.0639 557.8424 562.35519 563.8814 566.15017 567.6764 569.9451 573.72366 580.4969 585.00967 588.0374 594.0599 598.57266 602.32638 606.1214 607.64767" y="-286">feature_cols = ['temp', 'RH', 'PM_KCl','PM_smoke']</tspan></text>
+</g>
+<g clip-path="url(#clip_9)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="609.5" y="-286"> </tspan></text>
+</g>
+<g clip-path="url(#clip_10)">
+<text font-family="Calibri" font-size="8.275" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="444.57 447.5904 451.36378 453.6394 457.4128 461.93095 464.20658 468.7247 471.75337 476.2715 477.79414 480.06147 483.83485 485.35743 487.62477 491.39814 496.66105 503.43827" y="-276.4">target_col = 'BAM'</tspan></text>
+</g>
+<path fill-rule="evenodd" fill="#ffffff" d="M475.47 199.93H583.46V252.526H475.47Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M475.47 199.93H583.46V252.526H475.47Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_11)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="477.78 482.26799 486.02174 488.274 491.26875 495.0225 497.26649 501.0202 503.2642 507.01795 508.51945 513.00747 515.2597 519.74777 522 524.99478 528.7485 530.25 534.738 536.99026 539.985 543.7388 547.4925 550.48727 554.24099 557.2357 560.9895 565.47756 568.4805 572.96859 574.4701 577.4731" y="-242.5">X_train = df_train[feature_cols]</tspan></text>
+</g>
+<g clip-path="url(#clip_12)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="477.78 481.51725 485.27925 488.274 490.5262 495.01423 496.51573 501.0037 502.5052 506.25895 508.50294 512.25668 515.2514 519.0052 521.25747 524.2522 528.0059 530.24996 534.00369 536.9984 539.2507 543.0044 545.99917 549.75289 553.50668 556.5014 560.2552 564.0007 567.75448 569.9985" y="-232.9">y_train = df_train[target_col]</tspan></text>
+</g>
+<g clip-path="url(#clip_13)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="477.78 482.26799 486.02174 488.274 492.76197 495.76496 498.0172 500.2612 504.01496 506.25895 510.01268 512.26498 516.753 519.00527 523.4933 526.4963 528.74856 531.7433 533.99557 537.7493 541.50308 544.4978 548.9858 551.23806 555.7261 559.47988 562.48287 566.9709 568.4724 572.21798" y="-213.68">X_test = df_test[feature_cols]</tspan></text>
+</g>
+<g clip-path="url(#clip_14)">
+<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="477.78 481.51725 485.27925 488.274 492.02775 495.03074 498.02549 499.52699 503.28074 505.52473 510.0127 512.26498 516.01876 519.0135 522.7673 525.77029 528.765 531.0173 534.012 537.76577 540.018 543.7717 548.25979 550.512 555.00009 558.00308 562.4911 563.9926" y="-204.08">y_test = df_test[target_col]</tspan></text>
+</g>
+<path d="M529.47 315.63V308.88H529.46V303.32" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.48 304.32 529.46 296.28 525.44 304.32H533.48Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M529.46 271.88V259.56" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.48 260.57 529.46 252.53 525.44 260.57H533.48Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M529.46 199.93V187.6" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.48 188.61 529.46 180.57 525.44 188.61H533.48Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M529.46 112.42V105.67H529.45V99.127" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.47 100.13 529.45 92.092 525.43 100.13H533.47Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" fill="#ffffff" d="M493.45 67.705H565.45V92.091H493.45Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M493.45 67.705H565.45V92.092H493.45V67.705ZM502.45 67.705V92.092M556.45 67.705V92.092" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_15)">
+<text font-family="Calibri" font-size="8.275" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="513.33 517.07858 520.07418 523.82278 525.32058 529.81387 531.31167 538.80056 541.8044" y="-76.825">Train MLR</tspan></text>
+</g>
+<path d="M529.45 67.705V47.74" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" d="M533.47 48.745 529.45 40.705 525.43 48.745H533.47Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path fill-rule="evenodd" fill="#ffffff" d="M506.95 13.705H551.95C559.41 13.705 565.45 19.749 565.45 27.205 565.45 34.661 559.41 40.705 551.95 40.705H506.95C499.5 40.705 493.45 34.661 493.45 27.205 493.45 19.749 499.5 13.705 506.95 13.705Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path d="M506.95 13.705H551.95C559.41 13.705 565.45 19.749 565.45 27.205 565.45 34.661 559.41 40.705 551.95 40.705H506.95C499.5 40.705 493.45 34.661 493.45 27.205 493.45 19.749 499.5 13.705 506.95 13.705Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<g clip-path="url(#clip_16)">
+<text font-family="Calibri" font-size="14.275" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="519 525.7521 533.24649" y="-22.275">End</tspan></text>
+</g>
+</g>
+</svg>
