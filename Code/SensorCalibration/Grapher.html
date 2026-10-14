@@ -148,11 +148,50 @@
       display: none !important;
     }
 
+    /* Capsule Legend Toggle Bars */
+    .param-toggle-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 8px;
+      width: 100%;
+      max-width: 950px;
+    }
+
+    .param-chip {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 15px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .param-chip.active {
+      opacity: 1;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+
+    .param-chip.inactive {
+      opacity: 0.3;
+      background-color: #2a2a2a !important;
+      color: #888888 !important;
+      border-color: #444444 !important;
+      text-decoration: line-through;
+    }
+
     /* Radar View Layout */
     .radar-wrapper {
       width: 100%;
       max-width: 650px;
-      height: calc(100% - 100px);
+      height: calc(100% - 130px);
       position: relative;
     }
 
@@ -247,11 +286,17 @@
 
     <!-- View 1: Multi-Axis Line Chart -->
     <div id="lineView" class="view-container hidden">
-      <canvas id="lineChartCanvas"></canvas>
+      <!-- Capsule Buttons Legend for Line Graph -->
+      <div id="lineParamToggles" class="param-toggle-bar"></div>
+      <div style="flex: 1; width: 100%; position: relative;">
+        <canvas id="lineChartCanvas"></canvas>
+      </div>
     </div>
 
     <!-- View 2: Single Radar Chart + 24hr Time Slider -->
     <div id="radarView" class="view-container hidden">
+      <!-- Capsule Buttons Legend for Radar Graph Entries -->
+      <div id="radarParamToggles" class="param-toggle-bar"></div>
       <div class="radar-wrapper">
         <canvas id="radarChartCanvas"></canvas>
       </div>
@@ -321,7 +366,6 @@
 
     // --- Data Fetching Methods ---
 
-    // 1. Fetch N recent entries
     function fetchRecentData() {
       const countInput = document.getElementById("recentCountInput");
       let count = parseInt(countInput.value, 10);
@@ -331,13 +375,11 @@
       executeFetch(url, `Fetching ${count} recent entries...`);
     }
 
-    // 2. Fetch all entries (up to ThingSpeak feed maximum of 8000)
     function fetchAllData() {
       const url = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_key=${READ_API_KEY}&results=8000`;
       executeFetch(url, "Fetching all available entries...");
     }
 
-    // 3. Fetch entries within a specific Date Range
     function fetchDateRangeData() {
       const startVal = document.getElementById("startDateInput").value;
       const endVal   = document.getElementById("endDateInput").value;
@@ -347,7 +389,6 @@
         return;
       }
 
-      // Format for ThingSpeak REST API: YYYY-MM-DD%20HH:NN:SS
       const startStr = encodeURIComponent(`${startVal} 00:00:00`);
       const endStr   = encodeURIComponent(`${endVal} 23:59:59`);
 
@@ -355,7 +396,6 @@
       executeFetch(url, `Fetching data from ${startVal} to ${endVal}...`);
     }
 
-    // Core Fetch Handler
     function executeFetch(url, statusMessage) {
       const loadingMsg = document.getElementById("loadingMsg");
       loadingMsg.innerText = statusMessage;
@@ -422,7 +462,7 @@
           },
           plugins: {
             legend: {
-              labels: { color: '#ffffff', font: { size: 12 } }
+              display: false // Disabled default legend box
             },
             tooltip: {
               backgroundColor: 'rgba(20, 20, 20, 0.9)',
@@ -465,6 +505,47 @@
           }
         }
       });
+
+      renderLineParamToggles();
+    }
+
+    // --- Render Line Chart Capsule Legend ---
+    function renderLineParamToggles() {
+      const container = document.getElementById("lineParamToggles");
+      if (!container) return;
+      container.innerHTML = "";
+
+      FIELD_CONFIGS.forEach((cfg, idx) => {
+        const chip = document.createElement("div");
+        chip.className = "param-chip active";
+        chip.id = `line-chip-${idx}`;
+        chip.style.backgroundColor = cfg.color + "33";
+        chip.style.borderColor = cfg.color;
+        chip.style.color = (cfg.color === '#ffe119' || cfg.color === '#bfef45') ? '#ffffff' : cfg.color;
+        chip.innerText = cfg.label;
+
+        chip.onclick = () => toggleLineParamVisibility(idx);
+        container.appendChild(chip);
+      });
+    }
+
+    function toggleLineParamVisibility(index) {
+      if (!lineChartInstance) return;
+
+      const isVisible = lineChartInstance.isDatasetVisible(index);
+      lineChartInstance.setDatasetVisibility(index, !isVisible);
+      lineChartInstance.update();
+
+      const chip = document.getElementById(`line-chip-${index}`);
+      if (chip) {
+        if (!isVisible) {
+          chip.classList.remove("inactive");
+          chip.classList.add("active");
+        } else {
+          chip.classList.remove("active");
+          chip.classList.add("inactive");
+        }
+      }
     }
 
     // --- Build View 2: Radar Chart ---
@@ -488,8 +569,7 @@
           maintainAspectRatio: false,
           plugins: {
             legend: {
-              position: 'top',
-              labels: { color: '#ffffff', font: { size: 11 } }
+              display: false // Disabled default legend box
             },
             tooltip: {
               callbacks: {
@@ -511,13 +591,49 @@
       });
     }
 
+    // --- Render Radar Chart Capsule Legend ---
+    function renderRadarParamToggles() {
+      const container = document.getElementById("radarParamToggles");
+      if (!container || !radarChartInstance) return;
+      container.innerHTML = "";
+
+      radarChartInstance.data.datasets.forEach((ds, idx) => {
+        const chip = document.createElement("div");
+        const isVisible = radarChartInstance.isDatasetVisible(idx);
+        chip.className = `param-chip ${isVisible ? 'active' : 'inactive'}`;
+        chip.id = `radar-chip-${idx}`;
+        
+        const color = ds.borderColor || '#0d6efd';
+        chip.style.backgroundColor = color + "33";
+        chip.style.borderColor = color;
+        chip.style.color = (color === '#ffe119' || color === '#bfef45') ? '#ffffff' : color;
+        chip.innerText = ds.label;
+
+        chip.onclick = () => {
+          const currentVis = radarChartInstance.isDatasetVisible(idx);
+          radarChartInstance.setDatasetVisibility(idx, !currentVis);
+          radarChartInstance.update();
+
+          if (!currentVis) {
+            chip.classList.remove("inactive");
+            chip.classList.add("active");
+          } else {
+            chip.classList.remove("active");
+            chip.classList.add("inactive");
+          }
+        };
+
+        container.appendChild(chip);
+      });
+    }
+
     // --- Update Radar Chart via 24-Hour Slider (5-Min Interval Window) ---
     function updateRadarChart(stepIndex) {
       if (!radarChartInstance || rawFeeds.length === 0) return;
 
       const step = parseInt(stepIndex, 10);
-      const endMinutes = (step + 1) * 5; // e.g. step 64 -> 325 mins = 05:25
-      const startMinutes = endMinutes - 5; // 320 mins = 05:20
+      const endMinutes = (step + 1) * 5;
+      const startMinutes = endMinutes - 5;
 
       const formatTimeStr = (totalMins) => {
         let h = Math.floor(totalMins / 60) % 24;
@@ -532,14 +648,12 @@
 
       document.getElementById("currentTimeStamp").innerText = `Window: ${startDisplay} to ${endDisplay}`;
 
-      // Find all feeds whose time of day falls inside [startMinutes, endMinutes]
       const matchingFeeds = rawFeeds.filter(feed => {
         const d = new Date(feed.created_at);
         const feedMinutes = d.getHours() * 60 + d.getMinutes() + d.getSeconds() / 60;
         return feedMinutes >= startMinutes && feedMinutes <= endMinutes;
       });
 
-      // Construct multi-color dataset overlay for each reading found in that 5-minute window
       if (matchingFeeds.length === 0) {
         radarChartInstance.data.datasets = [{
           label: 'No readings in this 5-min window',
@@ -560,7 +674,7 @@
           return {
             label: `[${idx + 1}] ${timeLabel}`,
             data: values,
-            backgroundColor: color + '22', // Translucent fill
+            backgroundColor: color + '22',
             borderColor: color,
             pointBackgroundColor: color,
             pointBorderColor: '#ffffff',
@@ -571,6 +685,7 @@
       }
 
       radarChartInstance.update();
+      renderRadarParamToggles();
     }
 
     // Pre-populate today's date in start and end date pickers
