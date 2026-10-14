@@ -6,6 +6,8 @@
   <title>Air Monitoring Visualizer</title>
   <!-- Chart.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Chart.js Zoom Plugin -->
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -106,6 +108,16 @@
     }
     .btn-success:hover {
       background-color: #157347;
+    }
+
+    .btn-reset-zoom {
+      background-color: #dc3545;
+      padding: 4px 12px;
+      font-size: 12px;
+      border-radius: 15px;
+    }
+    .btn-reset-zoom:hover {
+      background-color: #bb2d3b;
     }
 
     .btn:disabled {
@@ -286,7 +298,7 @@
 
     <!-- View 1: Multi-Axis Line Chart -->
     <div id="lineView" class="view-container hidden">
-      <!-- Capsule Buttons Legend for Line Graph -->
+      <!-- Capsule Buttons Legend for Line Graph & Reset Zoom Button -->
       <div id="lineParamToggles" class="param-toggle-bar"></div>
       <div style="flex: 1; width: 100%; position: relative;">
         <canvas id="lineChartCanvas"></canvas>
@@ -471,6 +483,24 @@
               borderColor: '#444444',
               borderWidth: 1,
               padding: 10
+            },
+            zoom: {
+              pan: {
+                enabled: true,
+                mode: 'x'
+              },
+              zoom: {
+                wheel: {
+                  enabled: true // Enable mouse wheel zoom in/out
+                },
+                drag: {
+                  enabled: true, // Enable selection rectangle drag zoom
+                  backgroundColor: 'rgba(13, 110, 253, 0.35)',
+                  borderColor: '#0d6efd',
+                  borderWidth: 1
+                },
+                mode: 'x'
+              }
             }
           },
           scales: {
@@ -509,7 +539,14 @@
       renderLineParamToggles();
     }
 
-    // --- Render Line Chart Capsule Legend ---
+    // --- Reset Zoom Helper Function ---
+    function resetLineZoom() {
+      if (lineChartInstance) {
+        lineChartInstance.resetZoom();
+      }
+    }
+
+    // --- Render Line Chart Capsule Legend & Reset Zoom Button ---
     function renderLineParamToggles() {
       const container = document.getElementById("lineParamToggles");
       if (!container) return;
@@ -527,6 +564,13 @@
         chip.onclick = () => toggleLineParamVisibility(idx);
         container.appendChild(chip);
       });
+
+      // Add "Reset Zoom" button to the toggle bar
+      const resetBtn = document.createElement("button");
+      resetBtn.className = "btn btn-reset-zoom";
+      resetBtn.innerText = "Reset Zoom";
+      resetBtn.onclick = resetLineZoom;
+      container.appendChild(resetBtn);
     }
 
     function toggleLineParamVisibility(index) {
