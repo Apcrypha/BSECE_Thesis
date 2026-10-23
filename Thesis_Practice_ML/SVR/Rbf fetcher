@@ -1,0 +1,42 @@
+import numpy as np
+import pandas as pd
+import joblib
+from sklearn.svm import SVR
+from sklearn.metrics.pairwise import rbf_kernel
+
+# 1. Load trained SVR model and Scaler (or use in-memory instances)
+svr_model = joblib.load('Models/Base_svr_model.joblib')
+scaler_X = joblib.load('Models/Base_svr_scaler_model.joblib')
+
+# Load sample evaluation data
+df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
+feature_cols = ['S3', 'S4', 'S1', 'S2']
+X_test_raw = df_test[feature_cols]
+X_test_scaled = scaler_X.transform(X_test_raw)
+
+# 2. Extract internal SVR parameters
+support_vectors = svr_model.support_vectors_  # x_i for support vectors [n_SV, n_features]
+dual_coefficients = svr_model.dual_coef_      # (alpha_i - alpha_i*) [1, n_SV]
+bias = svr_model.intercept_[0]               # Intercept / bias b
+gamma_val = svr_model._gamma                 # Calculated or explicitly set gamma
+
+# 3. Calculate the RBF Kernel Exponential Values e^(-gamma * ||x_i - x||^2)
+# Shape: [n_samples, n_support_vectors]
+rbf_kernel_matrix = rbf_kernel(X_test_scaled, support_vectors, gamma=gamma_val)
+
+# 4. Verify: Reconstruct SVR predictions using exported RBF matrix
+# Equation: f(x) = sum( (alpha_i - alpha_i*) * e^(-gamma * ||x_i - x||^2) ) + b
+reconstructed_predictions = np.dot(rbf_kernel_matrix, dual_coefficients.T).ravel() + bias
+official_predictions = svr_model.predict(X_test_scaled)
+
+# Check if reconstructed predictions match scikit-learn's predict output
+np.testing.assert_almost_equal(reconstructed_predictions, official_predictions)
+print("Reconstructed RBF predictions match svr_model.predict() perfectly!")
+
+# 5. Export RBF Kernel Matrix to CSV
+df_rbf = pd.DataFrame(
+    rbf_kernel_matrix, 
+    columns=[f"SV_{i}_RBF_Value" for i in range(support_vectors.shape[0])]
+)
+df_rbf.to_csv("CSV_Results/rbf_kernel_values.csv", index=False)
+print(f"RBF Kernel Matrix shape: {rbf_kernel_matrix.shape} (Samples x Support Vectors)")

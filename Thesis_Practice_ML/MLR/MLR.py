@@ -11,14 +11,14 @@ saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
 # Import / Load the pre-trained models from disk
-rf_model = joblib.load('Models\Base_rf_model.joblib')
-svr_model = joblib.load('Models\Base_svr_model.joblib')
-scaler_X = joblib.load('Models\Base_svr_scaler_model.joblib')
+rf_model = joblib.load('Models/Base_rf_model.joblib')
+svr_model = joblib.load('Models/Base_svr_model.joblib')
+scaler_X = joblib.load('Models/Base_svr_scaler_model.joblib')
 
 
 # Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset\Meta_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset\Validation_dataset.csv").dropna()
+df_train = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
+df_test = pd.read_csv("Dataset/Validation_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # Define Features and Target (must match exact CSV column headers)
