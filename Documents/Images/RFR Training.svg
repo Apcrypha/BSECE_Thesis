@@ -1,102 +1,90 @@
-<svg viewBox="312.3419689119171 472.032 185.50259067357516 323.13599999999997" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" style="max-height: 500px" width="185.50259067357516" height="323.13599999999997">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" width="612" height="792" viewBox="0 0 612 792">
 <defs>
 <clipPath id="clip_1">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M0 .00024414H612V792.00027H0Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_2">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_3">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_4">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_5">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_6">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_7">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_8">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 <clipPath id="clip_9">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
-</clipPath>
-<clipPath id="clip_10">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
-</clipPath>
-<clipPath id="clip_11">
-<path clip-rule="evenodd" d="M.00000912 0H612V792H.00000912Z" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M.00000912 0H612V792H.00000912Z" clip-rule="evenodd"/>
 </clipPath>
 </defs>
 <g>
-<path fill-rule="evenodd" fill="#ffffff" d="M379.81 287.47H424.81C432.26 287.47 438.31 293.51 438.31 300.97 438.31 308.42 432.26 314.47 424.81 314.47H379.81C372.35 314.47 366.31 308.42 366.31 300.97 366.31 293.51 372.35 287.47 379.81 287.47Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M379.81 287.47H424.81C432.26 287.47 438.31 293.51 438.31 300.97 438.31 308.42 432.26 314.47 424.81 314.47H379.81C372.35 314.47 366.31 308.42 366.31 300.97 366.31 293.51 372.35 287.47 379.81 287.47Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
 <g clip-path="url(#clip_1)">
-<text font-family="Calibri" font-size="14.275" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="375.88 382.63209 387.871 394.62309 397.62086 405.11524 408.12727 415.6216 422.3594" y="-296.3">Train RFR</tspan></text>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M0 .000061035H612V792.00009H0Z"/>
 </g>
-<path fill-rule="evenodd" fill="#ffffff" d="M338.27 251.47H466.34V268.088H338.27Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M338.27 251.47H466.34V268.088H338.27Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M174.5 606.27H219.5C226.95 606.27 233 612.32 233 619.77 233 627.23 226.95 633.27 219.5 633.27H174.5C167.04 633.27 161 627.23 161 619.77 161 612.32 167.04 606.27 174.5 606.27Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M174.5 606.27H219.5C226.95 606.27 233 612.32 233 619.77 233 627.23 226.95 633.27 219.5 633.27H174.5C167.04 633.27 161 627.23 161 619.77 161 612.32 167.04 606.27 174.5 606.27Z"/>
 <g clip-path="url(#clip_2)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="341.68 344.67475 346.92698 350.68074 357.4457 361.19947 365.7122 369.46595 371.70994 373.21144 377.72416 379.22566 383.73838 387.49214 391.24586 395.75859 400.27134 406.29383 410.04759 414.56034 416.81257 421.3253 424.32829 426.58055 431.09327 435.606 439.35975 441.61198 446.1247 449.1277 452.13069 456.64344 458.89567 461.8904" y="-256.88">rf_model = RandomForestRegressor()</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="14.04" font-family="Calibri"><tspan y="-615.55" x="170.14 176.97748 181.87744 188.50432 191.73352 199.10453 202.27756 209.90128 216.34564">Train RFR</tspan></text>
 </g>
-<path d="M402.31 251.47V244.72H402.3V239.14" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.32 240.15 402.3 232.11 398.28 240.15H406.32Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M352.28 215.49H452.32V232.108H352.28Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M352.28 215.49H452.32V232.108H352.28Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 606.27V599.04 593.3"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 594.12 197 587.58 193.73 594.12H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M107.54 570.96H286.47V587.578H107.54Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M107.54 570.96H286.47V587.578H107.54Z"/>
 <g clip-path="url(#clip_3)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="355.77 358.7895 361.06648 364.84498 371.60997 375.38847 379.90119 383.6797 385.94844 387.44993 390.4694 391.9709 394.9904 397.2674 401.78013 405.55863 407.83564 410.85514 414.63365 416.90238 420.68086 422.9496 424.45109 428.2213 432.73405 435.01106 438.03056 441.80906 443.31056 447.82328" y="-220.85">rf_model.fit(X_train, y_train)</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-576.84" x="113.4 117.709438 120.467159 124.43088 128.28205 130.91114 134.87485 136.6919 140.5109 144.73189 146.50873 150.57697 156.93662 161.15761 163.77866 167.38057 169.2941 173.51509 177.69588 180.33301 183.09073 186.9419 188.72678 192.94777 196.99993 201.22092 202.99776 207.31525 211.02973 215.34722 217.16426 223.50783 227.7047 231.92569 235.8653 237.77881 239.59586 241.9757 244.73342 248.93029 255.40248 257.2195 260.32298 263.9249 265.72587 269.7941 273.64527 276.39497">Create an empty untrained RFR model from sklearn</tspan></text>
 </g>
-<path d="M402.3 215.49V208.74H402.31V203.16" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.33 204.16 402.31 196.12 398.29 204.16H406.33Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M324.01 179.5H480.6V196.118H324.01Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M324.01 179.5H480.6V196.118H324.01Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 570.96V557.99"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 558.81 197 552.27 193.73 558.81H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M113.57 535.65H280.43V552.268H113.57Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M113.57 535.65H280.43V552.268H113.57Z"/>
 <g clip-path="url(#clip_4)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="327.4 329.64399 333.39775 337.8857 339.3872 341.6312 345.38493 347.62895 352.1169 355.87065 362.61088 366.3646 369.35935 371.61158 374.6063 378.36006 384.3578 388.8458 393.33378 397.08753 398.58903 400.833 402.3345 404.5785 409.0665 412.8285 415.83149 419.58525 423.339 426.33375 428.58598 433.07395 439.0717 443.5597 447.31343 451.8014 453.3029 455.5469 457.0484 461.5364 466.02439 467.52589 469.76988 473.5236 475.76759" y="-184.83">joblib.dump(rf_model, 'Base_rf_model.joblib')</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-541.54" x="121.85 125.69312 128.5634 132.41457 134.19945 138.42044 140.19728 142.83441 147.0554 151.10756 152.9246 159.26818 163.46504 167.68604 171.62564 173.53916 175.3562 179.53699 182.68064 184.45748 188.67847 192.37686 194.29039 196.92752 201.14852 205.08812 206.90517 210.0086 213.97232 217.80739 220.56511 224.52883 228.36389 232.08641 234.83609 238.7998 243.0208 244.79764 248.15836 252.35523 254.26874 258.48976 264.82527 269.04627">Train the model using the segregated columns</tspan></text>
 </g>
-<path d="M402.31 179.5V167.16" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.33 168.17 402.31 160.13 398.29 168.17H406.33Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M343.18 143.51H461.44V160.12799H343.18Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M343.18 143.51H461.44V160.12799H343.18Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 535.65V522.69"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 523.5 197 516.96 193.73 523.5H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M149.44 500.35H244.56601V516.968H149.44Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M149.44 500.35H244.56601V516.968H149.44Z"/>
 <g clip-path="url(#clip_5)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="347.35 351.08726 354.84925 359.33723 361.58946 366.07743 369.83116 372.07514 375.8289 378.07289 380.3251 382.57734 387.0653 393.06306 397.55107 402.03904 405.7928 407.29429 409.5383 414.02629 416.2785 420.76649 424.5202 426.7642 429.76719 432.76194 435.0142 439.50218 443.25593 445.50819 449.99617 452.99916 455.2514" y="-148.8">y_pred = rf_model.predict(X_test)</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-506.21" x="156.19 160.14569 163.50641 167.7274 172.02075 174.77848 177.4156 179.23265 181.96627 186.18726 190.12686 191.94391 194.56496 197.32268 201.17385 203.07128 207.29227 211.23188 215.45287 217.2297 223.58936 227.78623 232.00722 236.05937">Export the trained model</tspan></text>
 </g>
-<path d="M402.31 143.51V131.17" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.33 132.18 402.31 124.14 398.29 132.18H406.33Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M318.88 92.095H485.74V124.135H318.88Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M318.88 92.095H485.74V124.135H318.88Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 500.35V487.38"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 488.19 197 481.65 193.73 488.19H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M166.15 465.04H227.858V481.65803H166.15Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M166.15 465.04H227.858V481.65803H166.15Z"/>
 <g clip-path="url(#clip_6)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="321.28 328.02024 331.774 335.52775 337.02925 341.5172 343.0187 349.75895 353.5127 357.26646 361.75444 365.50819 369.26194 373.7499 376.7529 380.50666 382.75065 386.50437 389.4991 393.25288 397.74085 401.4946 404.48936 406.74159 411.22959 414.22434 416.4766 420.21385 423.97584 426.97059 430.72434 433.72734 436.72209 438.22358 440.46757 444.2048 447.9668 452.45478 454.707 459.19499 462.9487" y="-114.68">mae = mean_absolute_error(y_test, y_pred)</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-470.9" x="172.63 176.47313 180.54137 183.68502 186.29802 188.11507 190.73612 194.9571 199.00926 200.82631 207.16988 211.36675 215.58774 219.52735">Test the model</tspan></text>
 </g>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 465.04V452.07"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 452.89 197 446.35 193.73 452.89H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M139.86 429.73H254.14V446.34803H139.86Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M139.86 429.73H254.14V446.34803H139.86Z"/>
 <g clip-path="url(#clip_7)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="321.28 324.27476 330.2725 333.27549 337.76347 339.26496 343.0187 345.2627 348.25746 352.0112 356.4992 358.75148 363.23945 369.23719 373.72517 377.4789 381.23265 385.7206 388.7236 392.47734 396.9653 400.71907 403.7138 407.46757 411.95555 415.7093 419.46305 422.4578 425.45256 429.2063 432.20106 434.4533 438.19056 441.95256 444.9473 448.70106 452.44654 454.6988 456.94279 458.44429 462.18153 465.9435 470.4315 473.42625 477.18 481.66798" y="-105.05">rmse = root_mean_squared_error(y_test, y_pred)</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-435.58" x="144.12 149.28168 152.4012 156.36492 158.18196 161.7678 165.61898 167.40386 169.31737 173.53836 177.35736 179.99449 181.79546 185.99233 190.30176 192.1188 198.46237 202.42609 205.06322 207.93349 209.73445 213.09517 216.23882 218.01566 222.21253 224.721 226.53804 229.64148 233.24341 235.04438 239.11261 242.96378 245.71346">Use validation metrics of sklearn</tspan></text>
 </g>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 429.73V416.76"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 417.58 197 411.04 193.73 417.58H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M139.86 394.42H254.14V411.03804H139.86Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M139.86 394.42H254.14V411.03804H139.86Z"/>
 <g clip-path="url(#clip_8)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="321.28 324.27476 328.0285 330.2725 334.02626 335.52775 338.5225 342.27626 346.76423 349.7672 352.7702 357.2582 360.25297 364.0067 366.25898 369.99623 373.7582 376.75297 380.5067 383.5097 386.50447 388.74845 390.24995 393.98719 397.74919 402.23716 405.2319 408.98567 412.73939" y="-95.45">r2 = r2_score(y_test, y_pred)</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="8.04" font-family="Calibri"><tspan y="-400.27" x="145.8 149.87628 151.7898 155.98667 158.6238 160.44084 164.62163 167.4919 171.45561 175.6766 177.45345 180.81417 183.56385 185.3648 189.56168 193.78267 195.55951 199.7805 202.87592 204.78943 209.01042 212.70882 214.52587 220.86943 224.7206 227.46224 231.68323 233.46007 237.65694 240.29407 242.20758 244.00855">Plot prediction using matplotlib</tspan></text>
 </g>
-<path d="M402.31 92.095V85.345H402.3V79.751" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.32 80.756 402.3 72.716 398.28 80.756H406.32Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M354.74 52.585H449.866V72.716H354.74Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M354.74 52.585H449.866V72.716H354.74Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M197 394.42V381.45"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M200.27 382.27 197 375.73 193.73 382.27H200.27Z" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" d="M174.5 348.73H219.5C226.96 348.73 233 354.77 233 362.23 233 369.68 226.96 375.73 219.5 375.73H174.5C167.05 375.73 161 369.68 161 362.23 161 354.77 167.05 348.73 174.5 348.73Z" fill="#ffffff" fill-rule="evenodd"/>
+<path transform="matrix(1,0,0,-1,0,792)" stroke-width=".75" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke="#000000" d="M174.5 348.73H219.5C226.96 348.73 233 354.77 233 362.23 233 369.68 226.96 375.73 219.5 375.73H174.5C167.05 375.73 161 369.68 161 362.23 161 354.77 167.05 348.73 174.5 348.73Z"/>
 <g clip-path="url(#clip_9)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="357.17 360.92378 364.66926 368.423 370.66703 373.67 377.4155 381.16926 383.4215 386.41627 390.17 393.16477 395.41703 399.15428 402.91627 405.911 409.66477 412.66777 415.6625 417.164 419.408 423.14524 426.90724 431.3952 433.64744 438.1354 441.88914" y="-64.35">ax1.scatter(y_test, y_pred)</tspan></text>
-</g>
-<g clip-path="url(#clip_10)">
-<text font-family="Calibri" font-size="8.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="357.17 361.658 363.1595 366.15425 367.65574 370.65873 375.1467 379.6347 384.88169 387.87644" y="-54.75">plt.show()</tspan></text>
-</g>
-<path d="M402.31 287.47V275.13" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.33 276.13 402.31 268.09 398.29 276.13H406.33Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M402.3 52.585V45.835H402.31V40.256" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" d="M406.33 41.261 402.31 33.221 398.29 41.261H406.33Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path fill-rule="evenodd" fill="#ffffff" d="M379.81 6.2208H424.81C432.26 6.2208 438.31 12.265 438.31 19.721 438.31 27.177 432.26 33.221 424.81 33.221H379.81C372.35 33.221 366.31 27.177 366.31 19.721 366.31 12.265 372.35 6.2208 379.81 6.2208Z" transform="matrix(1,0,0,-1,0,792)"/>
-<path d="M379.81 6.2208H424.81C432.26 6.2208 438.31 12.265 438.31 19.721 438.31 27.177 432.26 33.221 424.81 33.221H379.81C372.35 33.221 366.31 27.177 366.31 19.721 366.31 12.265 372.35 6.2208 379.81 6.2208Z" stroke="#000000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="1.5" transform="matrix(1,0,0,-1,0,792)"/>
-<g clip-path="url(#clip_11)">
-<text font-family="Calibri" font-size="14.25" transform="matrix(1 0 -0 1 0 792)" xml:space="preserve"><tspan x="383.35 390.84553 397.6 402.82975 409.58427 414.814" y="-14.775">Return</tspan></text>
+<text xml:space="preserve" transform="matrix(1 0 -0 1 0 792)" font-size="14.04" font-family="Calibri"><tspan y="-357.96" x="177.62 185.17351 192.16544 196.81267 204.23984 209.04152">Return</tspan></text>
 </g>
 </g>
 </svg>

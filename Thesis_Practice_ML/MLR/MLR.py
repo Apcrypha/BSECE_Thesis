@@ -150,5 +150,5 @@ ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'M_validation_results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'MLR_validation_results.png'), dpi=300)
 plt.show()
