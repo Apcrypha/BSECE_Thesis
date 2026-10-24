@@ -12,7 +12,8 @@ saveCSV_directory = "CSV_Results"
 
 # Import / Load the pre-trained models from disk
 rf_model = joblib.load('Models/Base_rf_model.joblib')
-svr_model = joblib.load('Models/Base_svr_model.joblib')
+svr_model_RBF = joblib.load('Models/Base_svr_rbf_model.joblib')
+svr_model_LINEAR = joblib.load('Models/Base_svr_linear_model.joblib')
 scaler_X = joblib.load('Models/Base_svr_scaler_model.joblib')
 
 
@@ -38,14 +39,16 @@ X_meta_test_scaled = scaler_X.transform(X_meta_test_raw)
 
 # Predict using the base models
 pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
-pred_svr_meta_train = svr_model.predict(X_meta_scaled)
+pred_svr_RBF_meta_train = svr_model_RBF.predict(X_meta_scaled)
+pred_svr_LINEAR_meta_train = svr_model_LINEAR.predict(X_meta_scaled)
 
 pred_rf_meta_test = rf_model.predict(X_meta_test_raw)
-pred_svr_meta_test = svr_model.predict(X_meta_test_scaled)
+pred_svr_RBF_meta_test = svr_model_RBF.predict(X_meta_test_scaled)
+pred_svr_LINEAR_meta_test = svr_model_LINEAR.predict(X_meta_test_scaled)
 
 # Stack the predictions from the base models to create the meta-model training and testing datasets
-X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_meta_train   ))
-X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_meta_test))  
+X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_RBF_meta_train, pred_svr_LINEAR_meta_train))
+X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_RBF_meta_test, pred_svr_LINEAR_meta_test))
 
 mlr_model = LinearRegression()
 mlr_model.fit(X_meta_train_stacked, y_meta)
