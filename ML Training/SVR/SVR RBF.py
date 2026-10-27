@@ -18,8 +18,8 @@ df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['S3', 'S4', 'S1','S2'] 
-target_col = 'Ref'                
+feature_cols = ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income'] 
+target_col = 'median_house_value'                  
 
 X_train = df_train[feature_cols]
 y_train = df_train[target_col]
