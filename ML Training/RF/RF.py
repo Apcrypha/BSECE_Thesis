@@ -18,8 +18,8 @@ df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['longitude', 'latitude', 'housing_median_age', 'total_rooms', 'total_bedrooms', 'population', 'households', 'median_income'] 
-target_col = 'median_house_value'               
+feature_cols = ['DEWP', 'TEMP', 'PRES', 'Iws'] 
+target_col = 'pm2.5'             
 
 # 3. Assign 100% of train CSV to training set, test CSV to testing set
 X_train = df_train[feature_cols]
@@ -30,8 +30,8 @@ y_test = df_test[target_col]
 
 # 4. Initialize Random Forest with explicit hyperparameter control
 rf_model = RandomForestRegressor(
-    n_estimators=1000,     # Total number of decision trees in the forest
-    max_depth=17,         # Maximum depth limit for each tree (prevents overfitting)
+    n_estimators=10000,     # Total number of decision trees in the forest
+    max_depth=13,         # Maximum depth limit for each tree (prevents overfitting)
     max_features=3,  # Features considered at each split ('sqrt', 'log2', or integer/float)
     random_state=61     # Seed for reproducible results
 )
