@@ -11,10 +11,10 @@ saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
 # Import / Load the pre-trained models from disk
-rf_model = joblib.load('Models/Base_rf_model.joblib')
-svr_model_RBF = joblib.load('Models/Base_svr_rbf_model.joblib')
-svr_model_LINEAR = joblib.load('Models/Base_svr_linear_model.joblib')
-scaler_X = joblib.load('Models/Base_svr_scaler_model.joblib')
+rf_model = joblib.load('Output Models/Base_rf_model.joblib')
+svr_model_RBF = joblib.load('Output Models/Base_svr_rbf_model.joblib')
+svr_model_LINEAR = joblib.load('Output Models/Base_svr_linear_model.joblib')
+scaler_X = joblib.load('Output Models/Base_svr_scaler_model.joblib')
 
 
 # Load separate Training and Testing CSV datasets
@@ -23,8 +23,8 @@ df_test = pd.read_csv("Dataset/Validation_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols = ['DEWP', 'TEMP', 'PRES', 'Iws'] 
-target_col = 'pm2.5'               
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM10(KCl)'            
 
 # Assign the features and target for meta-model training and testing
 X_meta_train_raw = df_train[feature_cols]

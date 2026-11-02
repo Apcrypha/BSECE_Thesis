@@ -6,7 +6,7 @@ from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_sco
 import joblib
 import os
 
-saveModel_directory = "Models"
+saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
@@ -18,8 +18,8 @@ df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['DEWP', 'TEMP', 'PRES', 'Iws'] 
-target_col = 'pm2.5'             
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM10(KCl)'         
 
 # 3. Assign 100% of train CSV to training set, test CSV to testing set
 X_train = df_train[feature_cols]
