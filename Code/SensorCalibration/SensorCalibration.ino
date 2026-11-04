@@ -23,6 +23,9 @@
   int uploadStatus;
   bool Cleaning_State = false;
 
+  int uploadFailure = 0;             
+  #define UPLOAD_FAILURE_MAX           3     // When PM data upload failure reaches this number it should restart
+
   uint8_t overallStatus = 0;
     /*  
   ******Bit masking for Overall Status******
@@ -181,6 +184,7 @@ void setup() {
 void loop() {
   currentMicros = micros();
   currentMillis = millis();
+
  //Ensure WiFi is connected
   Reconnecting_index = 0;
   while(WiFi.status() != WL_CONNECTED){
@@ -250,16 +254,21 @@ void loop() {
           break;
         }
       }
-      digitalWrite(STATUS_LED_SENT_ERR, LOW);
-      delay(50);
-      digitalWrite(STATUS_LED_SENT_OK, HIGH);
-      delay(300);
-      digitalWrite(STATUS_LED_SENT_OK, LOW);
-      if(Send_index >= SEND_TIMEOUT){
-        Send_index = 0;
-        Serial.println("Status Channel: Field 1 update Skipped");  
-      } else  Serial.println("Status Channel: Field 1 update successful.");
       
+      if(Send_index >= SEND_TIMEOUT){
+        digitalWrite(STATUS_LED_SENT_ERR, LOW);
+        Send_index = 0;
+        Serial.println("Status Channel: Field 1 Skipped");
+      } else {
+        digitalWrite(STATUS_LED_SENT_ERR, LOW);
+        delay(50);
+        digitalWrite(STATUS_LED_SENT_OK, HIGH);
+        delay(300);
+        digitalWrite(STATUS_LED_SENT_OK, LOW);
+        Send_index = 0;
+        Serial.println("Status Channel: Field 1 update successful.");
+      }
+
       client.stop();
       systemStatus = 0;
     }
@@ -268,6 +277,10 @@ void loop() {
   if(currentMillis - lastTalkbackMillis >= THINGSPEAK_INTERVAL){
     lastTalkbackMillis = currentMillis;
     checkTalkBackCommands();
+  }
+ //Persistent Failure
+  if(uploadFailure >= UPLOAD_FAILURE_MAX){ // Restart the ESP if persistent upload failure happens
+    fullSystemReset();
   }
 }
 
@@ -284,7 +297,6 @@ void checkTalkBackCommands() {
     command.trim(); // Clean whitespace or newlines
       
     if (command.length() > 0) {
-      http.end(); //must clost the socket immediately
      
      //Restart ESP  
       if (command == "RESTART_ESP") {
@@ -321,6 +333,7 @@ void checkTalkBackCommands() {
         sendOverall_Status();
       }
     }
+    http.end(); //must clost the socket
   } else Serial.printf("TalkBack check failed, HTTP Code: %d\n", httpCode);
 }
 
@@ -389,7 +402,7 @@ void fullSystemReset() {
   //Set a 100-millisecond wake timer (100,000 microseconds)
   esp_sleep_enable_timer_wakeup(100 * 1000);
 
-  //Enter Deep Sleep -> Triggers a full Power-On Reset (POR) boot
+  //Enter Deep Sleep and Trigger a full Power-On Reset 
   esp_deep_sleep_start();
 }
 
@@ -474,9 +487,11 @@ void readPM(){
 
     if(Send_index >= SEND_TIMEOUT){
       Send_index = 0;
+      uploadFailure ++;
       Serial.println("PM Channel update Skipped");
     } else {
       Send_index = 0;
+      uploadFailure = 0;
       digitalWrite(PM_LED_SENT_OK, HIGH);
       delay(200);
       digitalWrite(PM_LED_SENT_OK, LOW);
