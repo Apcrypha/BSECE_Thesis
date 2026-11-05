@@ -6,7 +6,7 @@ from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_sco
 import joblib
 import os
 
-saveModel_directory = "Models"
+saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
@@ -94,7 +94,7 @@ ax1.plot(
 )
 
 ax1.set_title(
-    'Stacked MLR: Actual vs. Predicted PM₂.₅', fontsize=12, fontweight='bold'
+    'Stacked MLR: Actual vs. Predicted PM', fontsize=12, fontweight='bold'
 )
 ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
 ax1.set_ylabel('Stacked MLR Predicted PM₂.₅ (µg/m³)', fontsize=11)

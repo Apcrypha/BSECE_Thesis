@@ -72,7 +72,7 @@ min_val = min(y_test.min(), y_pred.min())
 max_val = max(y_test.max(), y_pred.max())
 ax1.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2, label='1:1 Ideal Line')
 
-ax1.set_title('Actual vs. Predicted Concentration', fontsize=12, fontweight='bold')
+ax1.set_title('Random Forest', fontsize=12, fontweight='bold')
 ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
 ax1.set_ylabel('Model Predicted PM (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
