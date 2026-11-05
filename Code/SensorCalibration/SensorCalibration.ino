@@ -1,3 +1,4 @@
+/* V1.5 Upload   */
 //-------------------------------------WiFi------------------------
   #include <WiFi.h>
 
@@ -266,11 +267,12 @@ void loop() {
         delay(300);
         digitalWrite(STATUS_LED_SENT_OK, LOW);
         Send_index = 0;
+
+        systemStatus = 0; //only reset the status when updata is successful
         Serial.println("Status Channel: Field 1 update successful.");
       }
 
       client.stop();
-      systemStatus = 0;
     }
   }
  //Talkback
@@ -279,7 +281,7 @@ void loop() {
     checkTalkBackCommands();
   }
  //Persistent Failure
-  if(uploadFailure >= UPLOAD_FAILURE_MAX){ // Restart the ESP if persistent upload failure happens
+  if(uploadFailure >= UPLOAD_FAILURE_MAX && WiFi.status() == WL_CONNECTED){ // Restart the ESP if persistent upload failure happens even if internet is conected
     fullSystemReset();
   }
 }
@@ -369,7 +371,9 @@ void sendOverall_Status(){
       digitalWrite(STATUS_LED_SENT_OK, HIGH);
       delay(200);
       digitalWrite(STATUS_LED_SENT_OK, LOW);
-      Serial.println("Status Channel update successful."); 
+      
+      overallStatus = 0;
+      Serial.println("Overall Status successfully sent."); 
     }
     client.stop();
   }
