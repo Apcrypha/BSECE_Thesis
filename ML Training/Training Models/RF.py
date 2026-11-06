@@ -18,8 +18,8 @@ df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM10(KCl)'         
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM2.5(KCl)'           
 
 # 3. Assign 100% of train CSV to training set, test CSV to testing set
 X_train = df_train[feature_cols]
@@ -32,7 +32,7 @@ y_test = df_test[target_col]
 rf_model = RandomForestRegressor(
     n_estimators=10000,     # Total number of decision trees in the forest
     max_depth=13,         # Maximum depth limit for each tree (prevents overfitting)
-    max_features=3,  # Features considered at each split ('sqrt', 'log2', or integer/float)
+    max_features=5,  # Features considered at each split ('sqrt', 'log2', or integer/float)
     random_state=61     # Seed for reproducible results
 )
 

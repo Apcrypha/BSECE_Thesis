@@ -18,8 +18,8 @@ df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM10(KCl)'              
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM2.5(KCl)'              
 
 X_train = df_train[feature_cols]
 y_train = df_train[target_col]
@@ -38,7 +38,7 @@ joblib.dump(scaler_X, os.path.join(saveModel_directory, 'Base_svr_scaler_model.j
 # 4. Initialize SVR with explicit hyperparameter control
 SVR_model_RBF = SVR(
     kernel='rbf',    # Radial Basis Function kernel
-    C=25.0,          # Penalty parameter C (controls support vector force cap)
+    C=20.0,          # Penalty parameter C (controls support vector force cap)
     epsilon=0.01,     # Epsilon-insensitive tube margin
     gamma=0.07        # Kernel coefficient (controls influence radius of each SV; or 'scale'/'auto')
 )

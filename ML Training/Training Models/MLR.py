@@ -10,62 +10,38 @@ saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
-# Import / Load the pre-trained models from disk
-rf_model = joblib.load('Output Models/Base_rf_model.joblib')
-svr_model_RBF = joblib.load('Output Models/Base_svr_rbf_model.joblib')
-svr_model_LINEAR = joblib.load('Output Models/Base_svr_linear_model.joblib')
-scaler_X = joblib.load('Output Models/Base_svr_scaler_model.joblib')
-
 
 # Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Validation_dataset.csv").dropna()
-df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
+df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM10(KCl)'            
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM2.5(KCl)'              
 
-# Assign the features and target for meta-model training and testing
-X_meta_train_raw = df_train[feature_cols]
-y_meta = df_train[target_col]
+# Assign the features and target for basic-model training and testing
+X_train = df_train[feature_cols]
+y_train = df_train[target_col]
 
-X_meta_test_raw = df_test[feature_cols]
+X_test = df_test[feature_cols]
 y_test = df_test[target_col]
 
-# Scale the meta-model features using the pre-trained scaler
-X_meta_scaled = scaler_X.transform(X_meta_train_raw)
-X_meta_test_scaled = scaler_X.transform(X_meta_test_raw)
-
 # Predict using the base models
-pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
-pred_svr_RBF_meta_train = svr_model_RBF.predict(X_meta_scaled)
-pred_svr_LINEAR_meta_train = svr_model_LINEAR.predict(X_meta_scaled)
-
-pred_rf_meta_test = rf_model.predict(X_meta_test_raw)
-pred_svr_RBF_meta_test = svr_model_RBF.predict(X_meta_test_scaled)
-pred_svr_LINEAR_meta_test = svr_model_LINEAR.predict(X_meta_test_scaled)
 
 # Stack the predictions from the base models to create the meta-model training and testing datasets
-X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_RBF_meta_train, pred_svr_LINEAR_meta_train))
-X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_RBF_meta_test, pred_svr_LINEAR_meta_test))
 
 mlr_model = LinearRegression()
-mlr_model.fit(X_meta_train_stacked, y_meta)
+mlr_model.fit(X_train, y_train)
 
-joblib.dump(mlr_model, os.path.join(saveModel_directory, 'Meta_MLR_model.joblib'))
+joblib.dump(mlr_model, os.path.join(saveModel_directory, 'MLR_model.joblib'))
 
-y_pred = mlr_model.predict(X_meta_test_stacked)
-
-df_test_results['prediction'] = y_pred #Add the predictions as a new column
-
-df_test_results.to_csv(os.path.join(saveCSV_directory, "MLR_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
+y_pred = mlr_model.predict(X_test)
 
 mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print("--- Stacked MLR Validation Metrics ---")
+print("--- MLR Validation Metrics ---")
 print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
 print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
 print(f"R² Score                      : {r2:.4f}")
@@ -94,10 +70,10 @@ ax1.plot(
 )
 
 ax1.set_title(
-    'Stacked MLR: Actual vs. Predicted PM', fontsize=12, fontweight='bold'
+    'Basic MLR: Actual vs. Predicted PM', fontsize=12, fontweight='bold'
 )
 ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
-ax1.set_ylabel('Stacked MLR Predicted PM₂.₅ (µg/m³)', fontsize=11)
+ax1.set_ylabel('Basic MLR Predicted PM(µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
 ax1.grid(True, linestyle='--', alpha=0.5)
 

@@ -18,8 +18,8 @@ df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # 2. Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM10(KCl)'                
+feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col = 'PM2.5(KCl)'                
 
 X_train = df_train[feature_cols]
 y_train = df_train[target_col]

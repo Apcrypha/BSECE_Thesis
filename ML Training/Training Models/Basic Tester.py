@@ -18,10 +18,12 @@ for folder in [saveModel_directory, saveGraph_directory, saveCSV_directory]:
   os.makedirs(folder, exist_ok=True)
 
 # 1. Import / Load pre-trained models from disk
-rf_model = joblib.load('Output Models/Base_rf_model.joblib')
-svr_model_RBF = joblib.load('Output Models/Base_svr_rbf_model.joblib')
-svr_model_LINEAR = joblib.load('Output Models/Base_svr_linear_model.joblib')
-scaler_X = joblib.load('Output Models/Base_svr_scaler_model.joblib')
+rf_model            = joblib.load('Output Models/Base_rf_model.joblib')
+mlr_model           = joblib.load('Output Models/MLR_model.joblib')
+svr_model_RBF       = joblib.load('Output Models/Base_svr_rbf_model.joblib')
+svr_model_LINEAR    = joblib.load('Output Models/Base_svr_linear_model.joblib')
+scaler_X            = joblib.load('Output Models/Base_svr_scaler_model.joblib')
+#ensemble_model      = joblib.load('Output Models/Ensemble_model.joblib')
 
 # 2. Load Training and Testing Datasets
 df_meta = pd.read_csv('Dataset/Meta_dataset.csv').dropna()
@@ -35,18 +37,18 @@ feature_cols = [
     'temp',
     'RH',
     'PM10(Smoke)',
-    'PM2.5(KCl)',
+    'PM10(KCl)',
     'PM2.5(Smoke)',
     'PM1(KCl)',
     'PM1(Smoke)',
 ]
-target_col = 'PM10(KCl)'
+target_col = 'PM2.5(KCl)'
 
-# Feature matrices for MLR training (Meta_dataset)
+# Feature matrices for ensemble training (Meta_dataset)
 X_meta_train_raw = df_meta[feature_cols]
 y_meta_train = df_meta[target_col]
 
-# Feature matrices for MLR testing (Validation_dataset alone)
+# Feature matrices for ensemble testing (Validation_dataset alone)
 X_val_raw = df_val[feature_cols]
 y_val_test = df_val[target_col]
 
@@ -59,46 +61,50 @@ X_meta_train_scaled = scaler_X.transform(X_meta_train_raw)
 X_val_scaled = scaler_X.transform(X_val_raw)
 X_merged_scaled = scaler_X.transform(X_merged_raw)
 
-# 5. Train the Stacked MLR Meta-Learner
+# 5. Train the Stacked ensemble Meta-Learner
 # Generate base model predictions on Meta_dataset
-pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
-pred_svr_RBF_meta_train = svr_model_RBF.predict(X_meta_train_scaled)
-pred_svr_LINEAR_meta_train = svr_model_LINEAR.predict(X_meta_train_scaled)
+pred_mlr_meta_train         = mlr_model.predict(X_meta_train_raw)
+pred_rf_meta_train          = rf_model.predict(X_meta_train_raw)
+pred_svr_RBF_meta_train     = svr_model_RBF.predict(X_meta_train_scaled)
+pred_svr_LINEAR_meta_train  = svr_model_LINEAR.predict(X_meta_train_scaled)
 
 X_meta_train_stacked = np.column_stack((
+    pred_mlr_meta_train,
     pred_rf_meta_train,
     pred_svr_RBF_meta_train,
     pred_svr_LINEAR_meta_train,
 ))
 
-mlr_model = LinearRegression()
-mlr_model.fit(X_meta_train_stacked, y_meta_train)
+ensemble_model = LinearRegression()
+ensemble_model.fit(X_meta_train_stacked, y_meta_train)
 joblib.dump(
-    mlr_model, os.path.join(saveModel_directory, 'Meta_MLR_model.joblib')
+    ensemble_model, os.path.join(saveModel_directory, 'Tester_Ensemble_model.joblib')
 )
 
-# 6. Generate MLR Predictions on Validation_dataset ALONE
-pred_rf_val = rf_model.predict(X_val_raw)
-pred_svr_RBF_val = svr_model_RBF.predict(X_val_scaled)
+# 6. Generate Ensemble Predictions on Validation_dataset ALONE
+pred_mlr_val        = mlr_model.predict(X_val_raw)
+pred_rf_val         = rf_model.predict(X_val_raw)
+pred_svr_RBF_val    = svr_model_RBF.predict(X_val_scaled)
 pred_svr_LINEAR_val = svr_model_LINEAR.predict(X_val_scaled)
 
 X_val_stacked = np.column_stack(
-    (pred_rf_val, pred_svr_RBF_val, pred_svr_LINEAR_val)
+    (pred_mlr_val, pred_rf_val, pred_svr_RBF_val, pred_svr_LINEAR_val)
 )
-y_pred_mlr = mlr_model.predict(X_val_stacked)
+y_pred_ensemble = ensemble_model.predict(X_val_stacked)
 
-# Export MLR Validation CSV
+# Export Ensemble Validation CSV
 df_test_results = df_val.copy()
-df_test_results['prediction'] = y_pred_mlr
+df_test_results['prediction'] = y_pred_ensemble
 df_test_results.to_csv(
-    os.path.join(saveCSV_directory, 'MLR_dataset_with_predictions.csv'),
+    os.path.join(saveCSV_directory, 'Tester_Ensemble_dataset_with_predictions.csv'),
     index=False,
 )
 
 # 7. Generate Base Learner Predictions on MERGED Dataset
-y_pred_rf = rf_model.predict(X_merged_raw)
-y_pred_svr_rbf = svr_model_RBF.predict(X_merged_scaled)
-y_pred_svr_linear = svr_model_LINEAR.predict(X_merged_scaled)
+y_pred_mlr          = mlr_model.predict(X_merged_raw)
+y_pred_rf           = rf_model.predict(X_merged_raw)
+y_pred_svr_rbf      = svr_model_RBF.predict(X_merged_scaled)
+y_pred_svr_linear   = svr_model_LINEAR.predict(X_merged_scaled)
 
 # 8. Compute Performance Metrics
 # Base Learners (Tested on Merged Dataset)
@@ -118,11 +124,15 @@ metrics = {
         'rmse': root_mean_squared_error(y_merged_test, y_pred_svr_linear),
         'r2': r2_score(y_merged_test, y_pred_svr_linear),
     },
-    # Meta Learner (Tested on Validation Dataset Alone)
     'MLR': {
-        'mae': mean_absolute_error(y_val_test, y_pred_mlr),
-        'rmse': root_mean_squared_error(y_val_test, y_pred_mlr),
-        'r2': r2_score(y_val_test, y_pred_mlr),
+        'mae': mean_absolute_error(y_merged_test, y_pred_mlr),
+        'rmse': root_mean_squared_error(y_merged_test, y_pred_mlr),
+        'r2': r2_score(y_merged_test, y_pred_mlr),
+    },
+    'Ensemble': {
+        'mae': mean_absolute_error(y_val_test, y_pred_ensemble),
+        'rmse': root_mean_squared_error(y_val_test, y_pred_ensemble),
+        'r2': r2_score(y_val_test, y_pred_ensemble),
     },
 }
 
@@ -143,65 +153,81 @@ print(
     f" R²={metrics['SVR_Linear']['r2']:.4f}"
 )
 print(
-    f"Stacked MLR (Validation Set) : MAE={metrics['MLR']['mae']:.4f} |"
+    f"MLR (Merged Set) : MAE={metrics['MLR']['mae']:.4f} |"
     f" RMSE={metrics['MLR']['rmse']:.4f} | R²={metrics['MLR']['r2']:.4f}"
+)
+print(
+    f"Ensemble (Validation Set) : MAE={metrics['Ensemble']['mae']:.4f} |"
+    f" RMSE={metrics['Ensemble']['rmse']:.4f} | R²={metrics['Ensemble']['r2']:.4f}"
 )
 
 # 9. Plot 4 Scatterplots in a Single 2x2 Image
-fig, axes = plt.subplots(2, 2, figsize=(14, 12))
-((ax1, ax2), (ax3, ax4)) = axes
+fig, axes = plt.subplots(3, 2, figsize=(14, 15))
+((ax1, ax2), (ax3, ax4), (ax5, ax6)) = axes
+
+# Remove the unused 6th axis frame
+fig.delaxes(ax6)
 
 plot_configs = [
     {
-        'ax': ax1,
-        'y_true': y_merged_test,
-        'y_pred': y_pred_rf,
-        'title': 'Random Forest (Merged Test Set)',
-        'color': '#059669',
-        'edge': '#047857',
-        'm': metrics['RF'],
+        "ax": ax1,
+        "y_true": y_merged_test,
+        "y_pred": y_pred_rf,
+        "title": "Random Forest (Merged Test Set)",
+        "color": "#059669",
+        "edge": "#047857",
+        "m": metrics["RF"],
     },
     {
-        'ax': ax2,
-        'y_true': y_merged_test,
-        'y_pred': y_pred_svr_rbf,
-        'title': 'SVR RBF Kernel (Merged Test Set)',
-        'color': '#0D9488',
-        'edge': '#0F766E',
-        'm': metrics['SVR_RBF'],
+        "ax": ax2,
+        "y_true": y_merged_test,
+        "y_pred": y_pred_svr_rbf,
+        "title": "SVR RBF Kernel (Merged Test Set)",
+        "color": "#0D9488",
+        "edge": "#0F766E",
+        "m": metrics["SVR_RBF"],
     },
     {
-        'ax': ax3,
-        'y_true': y_merged_test,
-        'y_pred': y_pred_svr_linear,
-        'title': 'SVR Linear Kernel (Merged Test Set)',
-        'color': '#0EA5E9',
-        'edge': '#0284C7',
-        'm': metrics['SVR_Linear'],
+        "ax": ax3,
+        "y_true": y_merged_test,
+        "y_pred": y_pred_svr_linear,
+        "title": "SVR Linear Kernel (Merged Test Set)",
+        "color": "#0EA5E9",
+        "edge": "#0284C7",
+        "m": metrics["SVR_Linear"],
     },
     {
-        'ax': ax4,
-        'y_true': y_val_test,
-        'y_pred': y_pred_mlr,
-        'title': 'Stacked MLR (Validation Set Alone)',
-        'color': '#8B5CF6',
-        'edge': '#6D28D9',
-        'm': metrics['MLR'],
+        "ax": ax4,
+        "y_true": y_merged_test,  # Fixed: Match y_pred_mlr dataset
+        "y_pred": y_pred_mlr,
+        "title": "MLR Base Learner (Merged Test Set)",
+        "color": "#8B5CF6",
+        "edge": "#6D28D9",
+        "m": metrics["MLR"],
+    },
+    {
+        "ax": ax5,
+        "y_true": y_val_test,
+        "y_pred": y_pred_ensemble,
+        "title": "Stacked Ensemble (Validation Set Alone)",
+        "color": "#F59E0B",
+        "edge": "#D97706",
+        "m": metrics["Ensemble"],
     },
 ]
 
 for cfg in plot_configs:
-  ax = cfg['ax']
-  y_t = cfg['y_true']
-  y_p = cfg['y_pred']
+  ax = cfg["ax"]
+  y_t = cfg["y_true"]
+  y_p = cfg["y_pred"]
 
   ax.scatter(
       y_t,
       y_p,
       alpha=0.7,
-      color=cfg['color'],
-      edgecolors=cfg['edge'],
-      label='Predictions',
+      color=cfg["color"],
+      edgecolors=cfg["edge"],
+      label="Predictions",
   )
 
   # 1:1 Reference Line
@@ -210,16 +236,16 @@ for cfg in plot_configs:
   ax.plot(
       [min_val, max_val],
       [min_val, max_val],
-      'r--',
+      "r--",
       linewidth=2,
-      label='1:1 Ideal Line',
+      label="1:1 Ideal Line",
   )
 
-  ax.set_title(cfg['title'], fontsize=12, fontweight='bold')
-  ax.set_xlabel('Reference Concentration (µg/m³)', fontsize=10)
-  ax.set_ylabel('Predicted Concentration (µg/m³)', fontsize=10)
-  ax.legend(loc='upper left')
-  ax.grid(True, linestyle='--', alpha=0.5)
+  ax.set_title(cfg["title"], fontsize=12, fontweight="bold")
+  ax.set_xlabel("Reference Concentration (µg/m³)", fontsize=10)
+  ax.set_ylabel("Predicted Concentration (µg/m³)", fontsize=10)
+  ax.legend(loc="upper left")
+  ax.grid(True, linestyle="--", alpha=0.5)
 
   # Overlay metrics text box
   txt = (
@@ -233,15 +259,15 @@ for cfg in plot_configs:
       transform=ax.transAxes,
       fontsize=10,
       bbox=dict(
-          boxstyle='round,pad=0.5',
-          facecolor='white',
+          boxstyle="round,pad=0.5",
+          facecolor="white",
           alpha=0.9,
-          edgecolor='#CBD5E1',
+          edgecolor="#CBD5E1",
       ),
   )
 
 plt.tight_layout()
 plt.savefig(
-    os.path.join(saveGraph_directory, 'All_Models_Scatterplots.png'), dpi=300
+    os.path.join(saveGraph_directory, 'All_Models_Scatterplots.png'), dpi=400
 )
 plt.show()
