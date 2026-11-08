@@ -1,8 +1,8 @@
-/* V1.5.1 Upload   */
+/* V1.5.2 Upload   */
 
-#define TESTING
+//#define TESTING
 //#define ENABLE_GYRO
-//#define FINAL
+#define FINAL
 
 #ifdef FINAL
 
@@ -127,15 +127,21 @@
 
 
 
-//-------------------------------------FAN-------------------------
-  #define FAN_PIN                     26
+//-------------------------------------FAN and Relay---------------
+  #define FAN_RELAY_PIN               26
   #define TEMPERATURE_THRESHOLD       30  //in °C
 
+  #define WIFI_RELAY_PIN              32  //NC
+  #define ESP32_RELAY_PIN             33  //NC
+
 void setup() {
+  digitalWrite(ESP32_RELAY_PIN, LOW); //Ensure that relay pin is off at the start
+  digitalWrite(WIFI_RELAY_PIN, LOW);
+  
   Serial.begin(115200); 
   Serial.println("Starting.......");
   systemStatus |= 1<<3; //Forces bit 3 to 1. makes sure that thingspeak is notified whenever esp32 restarts
- //LED
+ //Pin Modes
   pinMode(PM_LED_SENT_OK, OUTPUT);
   pinMode(PM_LED_SENT_ERR, OUTPUT);
   pinMode(RRH_LED_DISCONNECTED, OUTPUT);
@@ -145,10 +151,11 @@ void setup() {
   pinMode(GYRO_LED_DISCONNECTED, OUTPUT);
   pinMode(WiFi_LED_DISCONNECTED, OUTPUT);
   pinMode(FAN_LED_WORKING, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
+  pinMode(FAN_RELAY_PIN, OUTPUT);
+  pinMode(WIFI_RELAY_PIN, OUTPUT);
+  pinMode(ESP32_RELAY_PIN, OUTPUT);
 
   Serial.println("LED Configured");
-
   digitalWrite(ESP32_LED_STATUS, HIGH);
  //RRH62000  
   initializeRRH62000();
@@ -255,7 +262,7 @@ void loop() {
         digitalWrite(STATUS_LED_SENT_ERR, HIGH);
         Serial.println("Problem updating Status channel: Field 1. HTTP error code " + String(uploadStatus));
         WiFi.reconnect();
-        delay(3000);
+        delay(5000);
         uploadStatus = ThingSpeak.writeFields(STATUS_CHANNEL_ID, STATUS_WRITE_API_KEY);
 
         if(Send_index >= SEND_TIMEOUT){
@@ -288,7 +295,12 @@ void loop() {
     checkTalkBackCommands();
   }
  //Persistent Failure
-  if(uploadFailure >= UPLOAD_FAILURE_MAX && WiFi.status() == WL_CONNECTED){ // Restart the ESP if persistent upload failure happens even if internet is conected
+  if(uploadFailure >= UPLOAD_FAILURE_MAX){ // Restart the ESP if persistent upload failure happens even if internet is conected
+    digitalWrite(WIFI_RELAY_PIN, HIGH);
+    delay(5000);
+    digitalWrite(WIFI_RELAY_PIN, LOW);
+    delay(1000);
+
     fullSystemReset();
   }
 }
@@ -309,7 +321,14 @@ void checkTalkBackCommands() {
      
      //Restart ESP  
       if (command == "RESTART_ESP") {
-        fullSystemReset();
+        fullSystemReset(); //Disconnects the source via relay
+      }
+     //Restart WiFi
+      else if (command == "RESTART_WIFI") {
+        digitalWrite(WIFI_RELAY_PIN, HIGH); //Disconnects the source via relay
+        delay(5000);
+        digitalWrite(WIFI_RELAY_PIN, LOW); //Disconnects the source via relay
+
       }
      //Restart RRH62000
       else if(command == "RESTART_RRH62000"){
@@ -342,8 +361,17 @@ void checkTalkBackCommands() {
         sendOverall_Status();
       }
     }
-    http.end(); //must clost the socket
   } else Serial.printf("TalkBack check failed, HTTP Code: %d\n", httpCode);
+  http.end(); //must clost the socket
+}
+
+void fullSystemReset(){
+  digitalWrite(ESP32_RELAY_PIN, HIGH);
+  delay(1000);
+
+  // Fallback: 10ms hardware Deep Sleep POR in case the relay bounces instantly
+  esp_sleep_enable_timer_wakeup(10 * 1000);
+  esp_deep_sleep_start();
 }
 
 void sendOverall_Status(){
@@ -361,7 +389,7 @@ void sendOverall_Status(){
       digitalWrite(STATUS_LED_SENT_ERR, HIGH);
       Serial.println("Problem updating Status channel: Field 3-5. HTTP error code " + String(uploadStatus));
       WiFi.reconnect();
-      delay(3000);
+      delay(5000);
       uploadStatus = ThingSpeak.writeFields(STATUS_CHANNEL_ID, STATUS_WRITE_API_KEY);
 
       if(Send_index >= SEND_TIMEOUT){
@@ -395,28 +423,6 @@ bool I2C_Connected(uint8_t ADDRESS) {
   return (Wire.endTransmission() == 0);
 }
 
-void fullSystemReset() {
-  //turn off all GPIO outputs & LEDs
-  digitalWrite(FAN_PIN, LOW);
-  digitalWrite(FAN_LED_WORKING, LOW);
-  digitalWrite(PM_LED_SENT_OK, LOW);
-  digitalWrite(PM_LED_SENT_ERR, LOW);
-  digitalWrite(STATUS_LED_SENT_OK, LOW);
-  digitalWrite(STATUS_LED_SENT_ERR, LOW);
-  digitalWrite(ESP32_LED_STATUS, LOW);
-  digitalWrite(GYRO_LED_DISCONNECTED, LOW);
-  digitalWrite(WiFi_LED_DISCONNECTED, LOW);
-
-  //Send reset commands before rebooting
-  RRH_sensor.resetModule(); // Sends 0x52 software reset to RRH62000 IC
-
-  //Set a 100-millisecond wake timer (100,000 microseconds)
-  esp_sleep_enable_timer_wakeup(100 * 1000);
-
-  //Enter Deep Sleep and Trigger a full Power-On Reset 
-  esp_deep_sleep_start();
-}
-
 void wifiConnect(){
   Serial.print("Attempting to connect.....");
   while(WiFi.status() != WL_CONNECTED){
@@ -426,6 +432,11 @@ void wifiConnect(){
     Reconnecting_index ++;
 
     if(Reconnecting_index >= WIFI_DISCONNECTION_TIMEOUT){//Cant connect
+      digitalWrite(WIFI_RELAY_PIN, HIGH);
+      delay(5000);
+      digitalWrite(WIFI_RELAY_PIN, LOW);
+      delay(1000);
+      
       fullSystemReset();  //restart ESP32
     }
   } 
@@ -436,11 +447,11 @@ void wifiConnect(){
 
 void enclosureFAN(float temperature){
   if(temperature >= TEMPERATURE_THRESHOLD){
-    digitalWrite(FAN_PIN, HIGH);
+    digitalWrite(FAN_RELAY_PIN, HIGH);
     digitalWrite(FAN_LED_WORKING, HIGH);
     Serial.println("Fan Working");
   } else {
-    digitalWrite(FAN_PIN, LOW);
+    digitalWrite(FAN_RELAY_PIN, LOW);
     digitalWrite(FAN_LED_WORKING, LOW);
     Serial.println("Fan OFF");
   }
@@ -487,7 +498,7 @@ void readPM(){
       Serial.println(uploadStatus);
         
       WiFi.reconnect();
-      delay(3000);
+      delay(5000);
       uploadStatus = ThingSpeak.writeFields(PM_CHANNEL_ID, PM_WRITE_API_KEY);
       
       if(Send_index >= SEND_TIMEOUT){//Limit the retries
@@ -647,7 +658,7 @@ void readPM(){
 
 
 //-------------------------------------FAN-------------------------
-  #define FAN_PIN                     26
+  #define FAN_RELAY_PIN                     26
   #define TEMPERATURE_THRESHOLD       30  //in °C
 
 void setup() {
@@ -664,7 +675,7 @@ void setup() {
   pinMode(GYRO_LED_DISCONNECTED, OUTPUT);
   pinMode(WiFi_LED_DISCONNECTED, OUTPUT);
   pinMode(FAN_LED_WORKING, OUTPUT);
-  pinMode(FAN_PIN, OUTPUT);
+  pinMode(FAN_RELAY_PIN, OUTPUT);
 
   Serial.println("LED Configured");
 
@@ -923,7 +934,7 @@ bool I2C_Connected(uint8_t ADDRESS) {
 
 void fullSystemReset() {
   //turn off all GPIO outputs & LEDs
-  digitalWrite(FAN_PIN, LOW);
+  digitalWrite(FAN_RELAY_PIN, LOW);
   digitalWrite(FAN_LED_WORKING, LOW);
   digitalWrite(PM_LED_SENT_OK, LOW);
   digitalWrite(PM_LED_SENT_ERR, LOW);
@@ -962,11 +973,11 @@ void wifiConnect(){
 
 void enclosureFAN(float temperature){
   if(temperature >= TEMPERATURE_THRESHOLD){
-    digitalWrite(FAN_PIN, HIGH);
+    digitalWrite(FAN_RELAY_PIN, HIGH);
     digitalWrite(FAN_LED_WORKING, HIGH);
     Serial.println("Fan Working");
   } else {
-    digitalWrite(FAN_PIN, LOW);
+    digitalWrite(FAN_RELAY_PIN, LOW);
     digitalWrite(FAN_LED_WORKING, LOW);
     Serial.println("Fan OFF");
   }
