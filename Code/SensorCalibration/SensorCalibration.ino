@@ -1,7 +1,7 @@
 /* V1.5.1 Upload   */
 
 #define TESTING
-#define ENABLE_GYRO
+//#define ENABLE_GYRO
 //#define FINAL
 
 #ifdef FINAL
@@ -670,11 +670,11 @@ void setup() {
 
   digitalWrite(ESP32_LED_STATUS, HIGH);
  //RRH62000  
+    Wire.begin(SDA_PIN, SCL_PIN);
+    Wire.setClock(100000); 
   initializeRRH62000();
  //Gyro
-  #ifdef ENABLE_GYRO
-    Wire.begin(SDA_PIN, SCL_PIN);
-    Wire.setClock(100000);  
+  #ifdef ENABLE_GYRO 
     // Initialize MPU6500
     int err = IMU.init(calib, IMU_ADDRESS);
     while (err != 0) {
