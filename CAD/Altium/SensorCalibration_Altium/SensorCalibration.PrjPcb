@@ -50,23 +50,6 @@ PrefsVaultGUID=
 PrefsRevisionGUID=
 
 [Document1]
-DocumentPath=Prototype.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=0
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=NJRRADEK
-
-[Document2]
 DocumentPath=SensorCalibration.OutJob
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -83,24 +66,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document3]
-DocumentPath=TIA.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=1
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=YFECAABU
-
-[Document4]
+[Document2]
 DocumentPath=Imports\MLP91002.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -117,7 +83,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=TPFKKYEX
 
-[Document5]
+[Document3]
 DocumentPath=Imports\Sensor.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -134,7 +100,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=NIODFEIN
 
-[Document6]
+[Document4]
 DocumentPath=System.PcbDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -151,24 +117,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=OXTPQUDJ
 
-[Document7]
-DocumentPath=Sensors.SchDoc
-AnnotationEnabled=1
-AnnotateStartValue=1
-AnnotationIndexControlEnabled=0
-AnnotateSuffix=
-AnnotateScope=All
-AnnotateOrder=2
-DoLibraryUpdate=1
-DoDatabaseUpdate=1
-ClassGenCCAutoEnabled=1
-ClassGenCCAutoRoomEnabled=0
-ClassGenNCAutoScope=None
-DItemRevisionGUID=
-GenerateClassCluster=0
-DocumentUniqueId=PSAPMEBM
-
-[Document8]
+[Document5]
 DocumentPath=..\Imports\74HC4051BQ_115.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -185,7 +134,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document9]
+[Document6]
 DocumentPath=..\Imports\ESP32-DEVKITC-32D.IntLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -202,7 +151,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=
 
-[Document10]
+[Document7]
 DocumentPath=Actual_Prototype.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -219,7 +168,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=HEFFCJZU
 
-[Document11]
+[Document8]
 DocumentPath=Imports\RRH6200.SchLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -236,7 +185,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=SYHKRSNQ
 
-[Document12]
+[Document9]
 DocumentPath=Imports\RRH62000.PcbLib
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -253,7 +202,7 @@ DItemRevisionGUID=
 GenerateClassCluster=0
 DocumentUniqueId=KFBCYJMU
 
-[Document13]
+[Document10]
 DocumentPath=Proposed_Prototype.SchDoc
 AnnotationEnabled=1
 AnnotateStartValue=1
@@ -1273,6 +1222,8 @@ Type162=1
 Type163=1
 Type164=1
 Type165=2
+Type166=2
+Type167=2
 
 [ERC Connection Matrix]
 L1=NNNNNNNNNNNWNNNWW

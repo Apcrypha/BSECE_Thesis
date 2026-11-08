@@ -5,7 +5,6 @@
 #define FINAL
 
 #ifdef FINAL
-
 //-------------------------------------WiFi------------------------
   #include <WiFi.h>
 
