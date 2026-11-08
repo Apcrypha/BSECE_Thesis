@@ -16,16 +16,14 @@ df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
 df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM2.5(KCl)'              
+feature_cols_PM10 = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM10 = 'PM10(KCl)'                
 
-# Assign the features and target for basic-model training and testing
-X_train = df_train[feature_cols]
-y_train = df_train[target_col]
+X_train = df_train[feature_cols_PM10]
+y_train = df_train[target_col_PM10]
 
-X_test = df_test[feature_cols]
-y_test = df_test[target_col]
-
+X_test = df_test[feature_cols_PM10]
+y_test = df_test[target_col_PM10]
 # Predict using the base models
 
 # Stack the predictions from the base models to create the meta-model training and testing datasets
@@ -33,7 +31,7 @@ y_test = df_test[target_col]
 mlr_model = LinearRegression()
 mlr_model.fit(X_train, y_train)
 
-joblib.dump(mlr_model, os.path.join(saveModel_directory, 'MLR_model.joblib'))
+joblib.dump(mlr_model, os.path.join(saveModel_directory, 'PM10_Base_mlr_model.joblib'))
 
 y_pred = mlr_model.predict(X_test)
 
@@ -41,10 +39,10 @@ mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print("--- MLR Validation Metrics ---")
-print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
-print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
+print("---PM10 MLR Validation Metrics ---")
 print(f"R² Score                      : {r2:.4f}")
+print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
+print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
 
 # 8. Graph Validated Results
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
@@ -69,11 +67,9 @@ ax1.plot(
     label='1:1 Ideal Line',
 )
 
-ax1.set_title(
-    'Basic MLR: Actual vs. Predicted PM', fontsize=12, fontweight='bold'
-)
-ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
-ax1.set_ylabel('Basic MLR Predicted PM(µg/m³)', fontsize=11)
+ax1.set_title('PM10 MLR', fontsize=12, fontweight='bold')
+ax1.set_xlabel('Reference BAM PM10 (µg/m³)', fontsize=11)
+ax1.set_ylabel('MLR Predicted PM10 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
 ax1.grid(True, linestyle='--', alpha=0.5)
 
@@ -119,15 +115,15 @@ ax2.plot(
 )
 
 ax2.set_title(
-    f'Stacked MLR Time-Series Tracking (First {samples_to_plot} Samples)',
+    f'PM10 MLR Time-Series Validation (First {samples_to_plot} Samples)',
     fontsize=12,
     fontweight='bold',
 )
 ax2.set_xlabel('Sequence / Time Index', fontsize=11)
-ax2.set_ylabel('PM Concentration (µg/m³)', fontsize=11)
+ax2.set_ylabel('PM10 Concentration (µg/m³)', fontsize=11)
 ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'MLR_validation_results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'PM10_MLR_Validation_Results.png'), dpi=300)
 plt.show()

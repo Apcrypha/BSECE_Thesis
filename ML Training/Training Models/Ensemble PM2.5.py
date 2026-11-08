@@ -11,11 +11,10 @@ saveGraph_directory = "Graphs"
 saveCSV_directory = "CSV_Results"
 
 # Import / Load the pre-trained models from disk
-rf_model = joblib.load('Output Models/Base_rf_model.joblib')
-svr_model_RBF = joblib.load('Output Models/Base_svr_rbf_model.joblib')
-svr_model_LINEAR = joblib.load('Output Models/Base_svr_linear_model.joblib')
-scaler_X = joblib.load('Output Models/Base_svr_scaler_model.joblib')
-
+rf_model = joblib.load('Output Models/PM2.5_Base_rf_model.joblib')
+svr_model_RBF = joblib.load('Output Models/PM2.5_Base_svr_rbf_model.joblib')
+svr_model_LINEAR = joblib.load('Output Models/PM2.5_Base_svr_linear_model.joblib')
+scaler_X = joblib.load('Output Models/PM2.5_Base_svr_rbf_scaler_model.joblib')  #rbf and linear models use the same scaler, so we can load either one
 
 # Load separate Training and Testing CSV datasets
 df_train = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
@@ -23,15 +22,15 @@ df_test = pd.read_csv("Dataset/Validation_dataset.csv").dropna()
 df_test_results = df_test.copy() #Create a copy of the original test DataFrame
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col = 'PM2.5(KCl)'              
+feature_cols_PM2_5 = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM2_5 = 'PM2.5(KCl)'              
 
 # Assign the features and target for meta-model training and testing
-X_meta_train_raw = df_train[feature_cols]
-y_meta = df_train[target_col]
+X_meta_train_raw = df_train[feature_cols_PM2_5]
+y_meta = df_train[target_col_PM2_5]
 
-X_meta_test_raw = df_test[feature_cols]
-y_test = df_test[target_col]
+X_meta_test_raw = df_test[feature_cols_PM2_5]
+y_test = df_test[target_col_PM2_5]
 
 # Scale the meta-model features using the pre-trained scaler
 X_meta_scaled = scaler_X.transform(X_meta_train_raw)
@@ -53,22 +52,22 @@ X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_RBF_meta_test
 mlr_model = LinearRegression()
 mlr_model.fit(X_meta_train_stacked, y_meta)
 
-joblib.dump(mlr_model, os.path.join(saveModel_directory, 'Ensemble_model.joblib'))
+joblib.dump(mlr_model, os.path.join(saveModel_directory, 'PM2.5_Ensemble_model.joblib'))
 
 y_pred = mlr_model.predict(X_meta_test_stacked)
 
 df_test_results['prediction'] = y_pred #Add the predictions as a new column
 
-df_test_results.to_csv(os.path.join(saveCSV_directory, "Ensemble_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
+df_test_results.to_csv(os.path.join(saveCSV_directory, "PM2.5_Ensemble_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
 
 mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print("--- Stacked MLR Validation Metrics ---")
-print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
-print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
+print("--- PM2.5 Stacked Ensemble ---")
 print(f"R² Score                      : {r2:.4f}")
+print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
+print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
 
 # 8. Graph Validated Results
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
@@ -94,10 +93,10 @@ ax1.plot(
 )
 
 ax1.set_title(
-    'Stacked Ensemble: Actual vs. Predicted PM', fontsize=12, fontweight='bold'
+    'PM2.5 Stacked Ensemble', fontsize=12, fontweight='bold'
 )
-ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
-ax1.set_ylabel('Stacked Ensemble Predicted PM(µg/m³)', fontsize=11)
+ax1.set_xlabel('Reference BAM PM2.5 (µg/m³)', fontsize=11)
+ax1.set_ylabel('Stacked Ensemble Predicted PM2.5 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
 ax1.grid(True, linestyle='--', alpha=0.5)
 
@@ -134,7 +133,7 @@ ax2.plot(
 ax2.plot(
     sample_index,
     np.array(y_pred)[:samples_to_plot],
-    label='Stacked MLR Prediction',
+    label='Stacked Ensemble Prediction',
     color='#8B5CF6',
     linestyle='--',
     linewidth=2,
@@ -143,15 +142,15 @@ ax2.plot(
 )
 
 ax2.set_title(
-    f'Enseble Time-Series Tracking (First {samples_to_plot} Samples)',
+    f'Stacked Ensemble Time-Series Tracking (First {samples_to_plot} Samples)',
     fontsize=12,
     fontweight='bold',
 )
 ax2.set_xlabel('Sequence / Time Index', fontsize=11)
-ax2.set_ylabel('PM Concentration (µg/m³)', fontsize=11)
+ax2.set_ylabel('PM2.5 Concentration (µg/m³)', fontsize=11)
 ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'Ensemble_validation_results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'PM2.5_Ensemble_Validation_Results.png'), dpi=300)
 plt.show()

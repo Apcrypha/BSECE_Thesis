@@ -1,0 +1,129 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_absolute_error, root_mean_squared_error, r2_score
+import joblib
+import os
+
+saveModel_directory = "Output Models"
+saveGraph_directory = "Graphs"
+saveCSV_directory = "CSV_Results"
+
+
+# Load separate Training and Testing CSV datasets
+df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
+df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
+
+# Define Features and Target (must match exact CSV column headers)
+feature_cols_PM2_5 = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM2_5 = 'PM2.5(KCl)'                
+
+X_train = df_train[feature_cols_PM2_5]
+y_train = df_train[target_col_PM2_5]
+
+X_test = df_test[feature_cols_PM2_5]
+y_test = df_test[target_col_PM2_5]
+# Predict using the base models
+
+# Stack the predictions from the base models to create the meta-model training and testing datasets
+
+mlr_model = LinearRegression()
+mlr_model.fit(X_train, y_train)
+
+joblib.dump(mlr_model, os.path.join(saveModel_directory, 'PM2.5_Base_mlr_model.joblib'))
+
+y_pred = mlr_model.predict(X_test)
+
+mae = mean_absolute_error(y_test, y_pred)
+rmse = root_mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print("---PM2.5 MLR Validation Metrics ---")
+print(f"R² Score                      : {r2:.4f}")
+print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
+print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
+
+# 8. Graph Validated Results
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+# GRAPH 1: Actual vs. Predicted Scatter Plot
+ax1.scatter(
+    y_test,
+    y_pred,
+    alpha=0.7,
+    color='#8B5CF6',
+    edgecolors='#6D28D9',
+    label='Validation Samples',
+)
+
+min_val = min(y_test.min(), y_pred.min())
+max_val = max(y_test.max(), y_pred.max())
+ax1.plot(
+    [min_val, max_val],
+    [min_val, max_val],
+    'r--',
+    linewidth=2,
+    label='1:1 Ideal Line',
+)
+
+ax1.set_title('PM2.5 MLR', fontsize=12, fontweight='bold')
+ax1.set_xlabel('Reference BAM PM2.5 (µg/m³)', fontsize=11)
+ax1.set_ylabel('MLR Predicted PM2.5 (µg/m³)', fontsize=11)
+ax1.legend(loc='upper left')
+ax1.grid(True, linestyle='--', alpha=0.5)
+
+metrics_text = (
+    f'$R^2$ = {r2:.3f}\nRMSE = {rmse:.2f} µg/m³\nMAE = {mae:.2f} µg/m³'
+)
+ax1.text(
+    0.60,
+    0.08,
+    metrics_text,
+    transform=ax1.transAxes,
+    fontsize=11,
+    bbox=dict(
+        boxstyle='round,pad=0.5',
+        facecolor='white',
+        alpha=0.9,
+        edgecolor='#CBD5E1',
+    ),
+)
+
+# GRAPH 2: Time-Series Tracking Plot
+samples_to_plot = 100
+sample_index = np.arange(1, min(len(y_test), samples_to_plot) + 1)
+
+ax2.plot(
+    sample_index,
+    np.array(y_test)[:samples_to_plot],
+    label='Actual (Reference)',
+    color='#1E293B',
+    linewidth=2,
+    marker='o',
+    markersize=3,
+)
+ax2.plot(
+    sample_index,
+    np.array(y_pred)[:samples_to_plot],
+    label='Stacked MLR Prediction',
+    color='#8B5CF6',
+    linestyle='--',
+    linewidth=2,
+    marker='x',
+    markersize=3,
+)
+
+ax2.set_title(
+    f'PM2.5 MLR Time-Series Validation (First {samples_to_plot} Samples)',
+    fontsize=12,
+    fontweight='bold',
+)
+ax2.set_xlabel('Sequence / Time Index', fontsize=11)
+ax2.set_ylabel('PM2.5 Concentration (µg/m³)', fontsize=11)
+ax2.legend(loc='upper right')
+ax2.grid(True, linestyle='--', alpha=0.5)
+
+plt.tight_layout()
+plt.savefig(os.path.join(saveGraph_directory, 'PM2.5_MLR_Validation_Results.png'), dpi=300)
+plt.show()
