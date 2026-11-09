@@ -78,6 +78,7 @@
     .btn-user-2 { background-color: #1d0dfd; width: 100%; font-size: 15px; padding: 12px; }
 
     .btn-red    { background-color: #dc3545; }
+    .btn-teal   { background-color: #17a2b8; }
     .btn-orange { background-color: #fd7e14; }
     .btn-purple { background-color: #6f42c1; }
     .btn-blue   { background-color: #007bff; }
@@ -132,7 +133,7 @@
       font-weight: bold;
       text-align: left;
       background-color: #f8f9fa;
-      width: 30%;
+      width: 35%;
     }
 
     /* Table 1 Color Formatting (Yes=Green, No=Red) */
@@ -169,14 +170,7 @@
     <h1 class="title">Select User to Access Controls</h1>
     
     <div style="max-width: 320px; margin: 0 auto;">
-      <!-- =================================================================== -->
-      <!-- WRITE USER 1 NAME HERE BELOW (Change 'User 1 Name' in parameter & label) -->
-      <!-- =================================================================== -->
       <button class="control-btn btn-user-1" onclick="loginUser('Fortune Glester')">Fortune Glester</button>
-      
-      <!-- =================================================================== -->
-      <!-- WRITE USER 2 NAME HERE BELOW (Change 'User 2 Name' in parameter & label) -->
-      <!-- =================================================================== -->
       <button class="control-btn btn-user-2" onclick="loginUser('Kenneth Zachary')">Kenneth Zachary</button>
     </div>
   </div>
@@ -192,6 +186,7 @@
     <!-- Top Row Buttons -->
     <div class="btn-row">
       <button class="control-btn btn-red" onclick="sendRestartEsp()">Restart ESP32</button>
+      <button class="control-btn btn-teal" onclick="sendRestartWifi()">Restart WiFi Router</button>
       <button class="control-btn btn-orange" onclick="sendRestartRrh()">Restart RRH62000</button>
       <button class="control-btn btn-purple" onclick="sendManualCleaning()">Manual Cleaning</button>
     </div>
@@ -271,6 +266,18 @@
           </tr>
           <tr id="rowBit4">
             <td>Cleaning</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit5">
+            <td>PM Scan Error</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit6">
+            <td>RRH62000 Disconnected</td>
+            <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
+          </tr>
+          <tr id="rowBit7">
+            <td>Gyro Disconnected</td>
             <td>--</td><td>--</td><td>--</td><td>--</td><td>--</td>
           </tr>
         </tbody>
@@ -388,6 +395,12 @@
       });
     }
 
+    function sendRestartWifi() {
+      sendTalkBackCommand("RESTART_WIFI", () => {
+        startCooldown();
+      });
+    }
+
     function sendRestartRrh() {
       sendTalkBackCommand("RESTART_RRH62000", () => {
         startCooldown();
@@ -497,7 +510,10 @@
             1: document.getElementById("rowBit1"),
             2: document.getElementById("rowBit2"),
             3: document.getElementById("rowBit3"),
-            4: document.getElementById("rowBit4")
+            4: document.getElementById("rowBit4"),
+            5: document.getElementById("rowBit5"),
+            6: document.getElementById("rowBit6"),
+            7: document.getElementById("rowBit7")
           };
 
           const rowTitles = {
@@ -505,10 +521,13 @@
             1: "Fan Malfunction",
             2: "Extreme particle concentration",
             3: "Restart Notification",
-            4: "Cleaning"
+            4: "Cleaning",
+            5: "PM Scan Error",
+            6: "RRH62000 Disconnected",
+            7: "Gyro Disconnected"
           };
 
-          for (let bit = 0; bit <= 4; bit++) {
+          for (let bit = 0; bit <= 7; bit++) {
             rowData[bit].innerHTML = `<td>${rowTitles[bit]}</td>`;
           }
 
@@ -520,7 +539,7 @@
 
             const fieldVal = parseInt(feed.field1, 10) || 0;
 
-            for (let bit = 0; bit <= 4; bit++) {
+            for (let bit = 0; bit <= 7; bit++) {
               const isSet = (fieldVal & (1 << bit)) !== 0;
               const cellText = isSet ? "Yes" : "No";
               const cellClass = isSet ? "cell-alarm-yes" : "cell-alarm-no";
