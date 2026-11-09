@@ -1,4 +1,4 @@
-/* V1.5.3 Upload   */
+/* V1.5.4 Upload   */
 
 //-------------------------------------WiFi------------------------
   #include <WiFi.h>
@@ -53,7 +53,7 @@
           |  4     |              Cleaning                |
           |  5     |           PM Scan Error              |
           |  6     |       RRH62000 Disconnected          |
-          |  7     |                 -                    |
+          |  7     |          Gyro Disconnected           |
   */
 //-------------------------------------RRH62000--------------------
   #include "RRH62000.h"
@@ -88,11 +88,11 @@
   #define TILT_THRESHOLD              45.0f
 
 //-------------------------------------Timing and Timeouts---------
-  unsigned long lastSampleMicros = 0; //For gyro
-  unsigned long lastSampleMillis = 0; //For PM
-  unsigned long lastStatusMillis = 0; //For status
-  unsigned long lastTalkbackMillis = 0; //For talkback
-  unsigned long lastCleaningMillis = 0; //For cleaning
+  unsigned long lastSampleMicros    = 0; //For gyro
+  unsigned long lastSampleMillis    = 0; //For PM
+  unsigned long lastStatusMillis    = 0; //For status
+  unsigned long lastTalkbackMillis  = 0; //For talkback
+  unsigned long lastCleaningMillis  = 0; //For cleaning
 
   unsigned long currentMicros;
   unsigned long currentMillis;
@@ -105,6 +105,9 @@
 
   #define RRH62000_DISCONNECTED_TIMEOUT   20  //20 tries in connecting
   uint8_t RRH62000_Reconnecting_index = 0;
+
+  #define IMU_DISCONNECTED_TIMEOUT        20  //20 tries in connecting
+  uint8_t IMU_Reconnecting_index      = 0;
 
   #define THINGSPEAK_INTERVAL             (16 * 1000) //in microseconds. the interval on status update. 1,000 is seconds to milliseconds conversion
   #define CLEANING_TIME                   (60 * 1000) //in microseconds. cleaning time
@@ -155,37 +158,41 @@ void setup() {
   Serial.println("LED Configured");
   digitalWrite(ESP32_LED_STATUS, HIGH);
  //RRH62000  
-  initializeRRH62000();
- //Gyro
   Wire.begin(SDA_PIN, SCL_PIN);
   Wire.setClock(100000);  
+  initializeRRH62000();
+ //Gyro
   // Initialize MPU6500
   int err = IMU.init(calib, IMU_ADDRESS);
   while (err != 0) {
+    IMU_Reconnecting_index ++;
+
     digitalWrite(GYRO_LED_DISCONNECTED, HIGH);
     Serial.print("Error initializing MPU6500. Code: ");
     Serial.println(err);
     err = IMU.init(calib, IMU_ADDRESS);
     delay(1000);
+
+    if(IMU_Reconnecting_index >= IMU_DISCONNECTED_TIMEOUT){
+      systemStatus |= 1<<7; //Forces bit 7 to 1
+      break;
+    }
   }
-  
-  // Set measurement range limits
-  IMU.setAccelRange(8);   // Options: 2, 4, 8, 16 (g)
-  IMU.setGyroRange(500);  // Options: 250, 500, 1000, 2000 (deg/s)
-  
-  digitalWrite(GYRO_LED_DISCONNECTED, LOW);
-  Serial.println("IMU Working");
+
+  if (err == 0){
+    IMU_Reconnecting_index = 0;
+
+    // Set measurement range limits
+    IMU.setAccelRange(8);   // Options: 2, 4, 8, 16 (g)
+    IMU.setGyroRange(500);  // Options: 250, 500, 1000, 2000 (deg/s)
+    
+    digitalWrite(GYRO_LED_DISCONNECTED, LOW);
+    Serial.println("IMU Working");
+  }
+
  //WiFi
   WiFi.mode(WIFI_STA); 
-  
-  Serial.print("Attempting to connect.....");
-  while(WiFi.status() != WL_CONNECTED){
-    digitalWrite(WiFi_LED_DISCONNECTED, HIGH);
-    WiFi.begin(SSID, PASSWORD); 
-    delay(5000);     
-  } 
-  digitalWrite(WiFi_LED_DISCONNECTED, LOW);
-  Serial.println("\nConnected.");
+  wifiConnect(100);
   
  //Thingspeak
   ThingSpeak.begin(client);  // Initialize ThingSpeak
@@ -210,7 +217,7 @@ void loop() {
       Reconnecting_index = 0;
       WiFi.disconnect();
       delay(2000);
-      wifiConnect();
+      wifiConnect(WIFI_DISCONNECTION_TIMEOUT);
     }     
   } 
   digitalWrite(WiFi_LED_DISCONNECTED, LOW);
@@ -429,7 +436,7 @@ bool I2C_Connected(uint8_t ADDRESS) {
   return (Wire.endTransmission() == 0);
 }
 
-void wifiConnect(){
+void wifiConnect(uint8_t wifi_timeout){
   Serial.print("Attempting to connect.....");
   while(WiFi.status() != WL_CONNECTED){
     digitalWrite(WiFi_LED_DISCONNECTED, HIGH);
@@ -437,7 +444,7 @@ void wifiConnect(){
     delay(5000);     
     Reconnecting_index ++;
 
-    if(Reconnecting_index >= WIFI_DISCONNECTION_TIMEOUT){//Cant connect
+    if(Reconnecting_index >= wifi_timeout){//Cant connect
       digitalWrite(WIFI_RELAY_PIN, HIGH);
       delay(5000);
       digitalWrite(WIFI_RELAY_PIN, LOW);
@@ -479,9 +486,13 @@ void initializeRRH62000(){
       }
     }
   }
-  if (I2C_Connected(0x69)){
-    systemStatus |= (1 << 6);  //default RRH62000 adress can be found in RRH62000.h
+  
+  RRH62000_Reconnecting_index = 0;
+  
+  if (I2C_Connected(0x69)){ //default RRH62000 adress can be found in RRH62000.h
+    systemStatus |= (1 << 6); 
     digitalWrite(RRH_LED_DISCONNECTED, LOW);
+
     // Configure module parameters via I2C
     RRH_sensor.setMovingAverage(60);          // Sampling interval should be MovingAverage * 3 
     RRH_sensor.setCleaningInterval(60480);    // Set auto-cleaning interval (60480 * 30s = 21 days). set to 21 days to make sure cleaning doesnt interrupt PM scanning
