@@ -1,4 +1,8 @@
-/* V1.5.4 Upload   */
+/* V1.5.5 Upload   */
+
+//-------------------------------------Account---------------------
+  //#define SCHOOL_ACCOUNT
+  #define GROUP_ACCOUNT
 
 //-------------------------------------WiFi------------------------
   #include <WiFi.h>
@@ -12,15 +16,27 @@
   #include "ThingSpeak.h" //Thingspeak by mathworks
   #include <HTTPClient.h>
 
+  #ifdef  SCHOOL_ACCOUNT
+    #define STATUS_CHANNEL_ID           3498647U                      
+    #define STATUS_WRITE_API_KEY        "W6I9KNG5O1F41071"
 
-  #define STATUS_CHANNEL_ID           3498647U
-  #define STATUS_WRITE_API_KEY        "W6I9KNG5O1F41071"
+    #define PM_CHANNEL_ID               3506848U
+    #define PM_WRITE_API_KEY            "ZDEWLBAPYNDSP98U"
 
-  #define PM_CHANNEL_ID               3506848U
-  #define PM_WRITE_API_KEY            "ZDEWLBAPYNDSP98U"
+    //                                                                      TALKBACK_ID                      TALKBACK_API_KEY        
+    #define TALKBACK_URL                "https://api.thingspeak.com/talkbacks/57954/commands/execute?api_key=3R1GNZ8OKY0ZIXYI"
+  #endif
 
-  //                                                                      TALKBACK_ID                      TALKBACK_API_KEY        
-  #define TALKBACK_URL                "https://api.thingspeak.com/talkbacks/57954/commands/execute?api_key=3R1GNZ8OKY0ZIXYI"
+  #ifdef  GROUP_ACCOUNT
+    #define STATUS_CHANNEL_ID           3498647U                      
+    #define STATUS_WRITE_API_KEY        "W6I9KNG5O1F41071"
+
+    #define PM_CHANNEL_ID               3577313U
+    #define PM_WRITE_API_KEY            "3AN31YQN4ATOJEUH"
+
+    //                                                                      TALKBACK_ID                      TALKBACK_API_KEY        
+    #define TALKBACK_URL                "https://api.thingspeak.com/talkbacks/57954/commands/execute?api_key=3R1GNZ8OKY0ZIXYI"
+  #endif
 
   int uploadStatus;
   bool Cleaning_State = false;
@@ -133,10 +149,11 @@
 
   #define WIFI_RELAY_PIN              32  //NC
   #define ESP32_RELAY_PIN             33  //NC
+  //The chosen relay is an active low, wich means it turns ON when input is LOW
 
 void setup() {
-  digitalWrite(ESP32_RELAY_PIN, LOW); //Ensure that relay pin is off at the start
-  digitalWrite(WIFI_RELAY_PIN, LOW);
+  digitalWrite(ESP32_RELAY_PIN, HIGH); //Ensure that relay pin is off at the start. The relay is active LOW
+  digitalWrite(WIFI_RELAY_PIN, HIGH);
   
   Serial.begin(115200); 
   Serial.println("Starting.......");
@@ -154,6 +171,9 @@ void setup() {
   pinMode(FAN_RELAY_PIN, OUTPUT);
   pinMode(WIFI_RELAY_PIN, OUTPUT);
   pinMode(ESP32_RELAY_PIN, OUTPUT);
+
+  digitalWrite(ESP32_RELAY_PIN, HIGH); //Ensure that relay pin is off at the start. The relay is active LOW
+  digitalWrite(WIFI_RELAY_PIN, HIGH);
 
   Serial.println("LED Configured");
   digitalWrite(ESP32_LED_STATUS, HIGH);
@@ -192,7 +212,7 @@ void setup() {
 
  //WiFi
   WiFi.mode(WIFI_STA); 
-  wifiConnect(100);
+  wifiConnect(100);    
   
  //Thingspeak
   ThingSpeak.begin(client);  // Initialize ThingSpeak
@@ -306,9 +326,9 @@ void loop() {
   }
  //Persistent Failure
   if(uploadFailure >= UPLOAD_FAILURE_MAX){ // Restart the ESP if persistent upload failure happens even if internet is conected
-    digitalWrite(WIFI_RELAY_PIN, HIGH);
+    digitalWrite(WIFI_RELAY_PIN, LOW);  //Relay is ACTIVE LOW
     delay(5000);
-    digitalWrite(WIFI_RELAY_PIN, LOW);
+    digitalWrite(WIFI_RELAY_PIN, HIGH);
     delay(1000);
 
     fullSystemReset();
@@ -334,9 +354,9 @@ void checkTalkBackCommands() {
       }
      //Restart WiFi
       else if (command == "RESTART_WIFI") {
-        digitalWrite(WIFI_RELAY_PIN, HIGH); //Disconnects the source via relay
-        delay(5000);
         digitalWrite(WIFI_RELAY_PIN, LOW); //Disconnects the source via relay
+        delay(5000);
+        digitalWrite(WIFI_RELAY_PIN, HIGH);
       }
      //Restart RRH62000
       else if(command == "RESTART_RRH62000"){
@@ -374,7 +394,7 @@ void checkTalkBackCommands() {
 }
 
 void fullSystemReset(){
-  digitalWrite(ESP32_RELAY_PIN, HIGH);
+  digitalWrite(ESP32_RELAY_PIN, LOW);
   delay(1000);
 
   // Fallback: 10ms hardware Deep Sleep POR in case the relay bounces instantly
@@ -445,9 +465,9 @@ void wifiConnect(uint8_t wifi_timeout){
     Reconnecting_index ++;
 
     if(Reconnecting_index >= wifi_timeout){//Cant connect
-      digitalWrite(WIFI_RELAY_PIN, HIGH);
-      delay(5000);
       digitalWrite(WIFI_RELAY_PIN, LOW);
+      delay(5000);
+      digitalWrite(WIFI_RELAY_PIN, HIGH);
       delay(1000);
       
       fullSystemReset();  //restart ESP32
