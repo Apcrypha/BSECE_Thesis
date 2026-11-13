@@ -1,4 +1,4 @@
-/* V1.5.5 Upload   */
+/* V1.5.6 Upload   */
 
 //-------------------------------------Account---------------------
   //#define SCHOOL_ACCOUNT
@@ -351,6 +351,11 @@ void checkTalkBackCommands() {
      //Restart ESP  
       if (command == "RESTART_ESP") {
         fullSystemReset(); //Disconnects the source via relay
+      }
+     //Software Restart ESP
+      else if(command == "SFTWR_RESTART_ESP"){
+        esp_sleep_enable_timer_wakeup(10 * 1000);
+        esp_deep_sleep_start();
       }
      //Restart WiFi
       else if (command == "RESTART_WIFI") {
