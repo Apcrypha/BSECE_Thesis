@@ -1,4 +1,4 @@
-/* V1.5.6 Upload   */
+/* V1.5.7 Upload   */
 
 //-------------------------------------Account---------------------
   //#define SCHOOL_ACCOUNT
@@ -194,7 +194,8 @@ void setup() {
     delay(1000);
 
     if(IMU_Reconnecting_index >= IMU_DISCONNECTED_TIMEOUT){
-      systemStatus |= 1<<7; //Forces bit 7 to 1
+      systemStatus |= 1<<7; //Forces bit 7 to 
+      IMU_Reconnecting_index = 0;
       break;
     }
   }
