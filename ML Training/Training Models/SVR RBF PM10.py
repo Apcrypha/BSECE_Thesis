@@ -100,5 +100,5 @@ ax2.legend(loc='upper right')
 ax2.grid(True, linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'PM10_RBF_SVR_Validation_Results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'PM10_SVR_RBF_Validation_Results.png'), dpi=300)
 plt.show()

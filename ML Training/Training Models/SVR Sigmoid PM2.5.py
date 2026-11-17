@@ -33,7 +33,7 @@ scaler_X = StandardScaler()
 X_train_scaled = scaler_X.fit_transform(X_train_PM2_5)
 X_test_scaled = scaler_X.transform(X_test_PM2_5)
 
-joblib.dump(scaler_X, os.path.join(saveModel_directory, 'PM2.5_Base_svr_poly_scaler_model.joblib'))
+joblib.dump(scaler_X, os.path.join(saveModel_directory, 'PM2.5_Base_svr_sigmoid_scaler_model.joblib'))
 
 # 4. Initialize SVR with explicit hyperparameter control
 
@@ -103,5 +103,5 @@ ax2.grid(True, linestyle='--', alpha=0.5)
 
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'PM2.5_Sigmoid_SVR_Validation_Results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'PM2.5_SVR_Sigmoid_Validation_Results.png'), dpi=300)
 plt.show()

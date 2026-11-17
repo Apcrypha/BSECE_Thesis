@@ -102,5 +102,5 @@ ax2.grid(True, linestyle='--', alpha=0.5)
 
 
 plt.tight_layout()
-plt.savefig(os.path.join(saveGraph_directory, 'PM10_Linear_SVR_Validation_Results.png'), dpi=300)
+plt.savefig(os.path.join(saveGraph_directory, 'PM10_SVR_Linear_Validation_Results.png'), dpi=300)
 plt.show()
