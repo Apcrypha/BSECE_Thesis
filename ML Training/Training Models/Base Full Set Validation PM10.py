@@ -19,6 +19,7 @@ rf_model            = joblib.load('Output Models/PM10_Base_rf_model.joblib')
 mlr_model           = joblib.load('Output Models/PM10_Base_MLR_model.joblib')
 svr_model_RBF       = joblib.load('Output Models/PM10_Base_svr_rbf_model.joblib')
 svr_model_LINEAR    = joblib.load('Output Models/PM10_Base_svr_linear_model.joblib')
+svr_model_POLY      = joblib.load('Output Models/PM10_Base_svr_poly_model.joblib')
 scaler_X            = joblib.load('Output Models/PM10_Base_svr_rbf_scaler_model.joblib') # linear and rbf models use the same scaler, so we can load either one
 #ensemble_model      = joblib.load('Output Models/PM10_Ensemble_model.joblib')
 
@@ -52,6 +53,7 @@ y_pred_mlr          = mlr_model.predict(X_merged_raw)
 y_pred_rf           = rf_model.predict(X_merged_raw)
 y_pred_svr_rbf      = svr_model_RBF.predict(X_merged_scaled)
 y_pred_svr_linear   = svr_model_LINEAR.predict(X_merged_scaled)
+y_pred_svr_poly     = svr_model_POLY.predict(X_merged_scaled)
 
 # 8. Compute Performance Metrics
 # Base Learners (Tested on Merged Dataset)
@@ -70,6 +72,11 @@ metrics = {
         'mae': mean_absolute_error(y_merged_test, y_pred_svr_linear),
         'rmse': root_mean_squared_error(y_merged_test, y_pred_svr_linear),
         'r2': r2_score(y_merged_test, y_pred_svr_linear),
+    },
+    'SVR_Poly': {
+        'mae': mean_absolute_error(y_merged_test, y_pred_svr_poly),
+        'rmse': root_mean_squared_error(y_merged_test, y_pred_svr_poly),
+        'r2': r2_score(y_merged_test, y_pred_svr_poly),
     },
     'MLR': {
         'mae': mean_absolute_error(y_merged_test, y_pred_mlr),
@@ -95,13 +102,20 @@ print(
     f" R²={metrics['SVR_Linear']['r2']:.4f}"
 )
 print(
+    f"SVR Polynomial (Merged Set)  : MAE={metrics['SVR_Poly']['mae']:.4f} |"
+    f" RMSE={metrics['SVR_Poly']['rmse']:.4f} |"
+    f" R²={metrics['SVR_Poly']['r2']:.4f}"
+)
+print(
     f"MLR (Merged Set) : MAE={metrics['MLR']['mae']:.4f} |"
     f" RMSE={metrics['MLR']['rmse']:.4f} | R²={metrics['MLR']['r2']:.4f}"
 )
 
 # 9. Plot 4 Scatterplots in a Single 2x2 Image
-fig, axes = plt.subplots(2, 2, figsize=(12, 12))
-((ax1, ax2), (ax3, ax4)) = axes
+fig, axes = plt.subplots(3, 2, figsize=(14, 15))
+((ax1, ax2), (ax3, ax4), (ax5, ax6)) = axes
+
+fig.delaxes(ax6)  # Remove the unused 6th axis frame
 
 plot_configs = [
     {
@@ -116,6 +130,15 @@ plot_configs = [
     {
         "ax": ax2,
         "y_true": y_merged_test,
+        "y_pred": y_pred_mlr,
+        "title": "PM10 MLR Base Learner (Merged Test Set)",
+        "color": "#F59E0B",
+        "edge": "#D97706",
+        "m": metrics["MLR"],
+    },
+    {
+        "ax": ax3,
+        "y_true": y_merged_test,
         "y_pred": y_pred_svr_rbf,
         "title": "PM10 SVR RBF Kernel (Merged Test Set)",
         "color": "#0D9488",
@@ -123,7 +146,7 @@ plot_configs = [
         "m": metrics["SVR_RBF"],
     },
     {
-        "ax": ax3,
+        "ax": ax4,
         "y_true": y_merged_test,
         "y_pred": y_pred_svr_linear,
         "title": "PM10 SVR Linear Kernel (Merged Test Set)",
@@ -132,13 +155,13 @@ plot_configs = [
         "m": metrics["SVR_Linear"],
     },
     {
-        "ax": ax4,
-        "y_true": y_merged_test,  # Fixed: Match y_pred_mlr dataset
-        "y_pred": y_pred_mlr,
-        "title": "PM10 MLR Base Learner (Merged Test Set)",
+        "ax": ax5,
+        "y_true": y_merged_test,  
+        "y_pred": y_pred_svr_poly,
+        "title": "PM10 SVR Polynomial Kernel (Merged Test Set)",
         "color": "#8B5CF6",
         "edge": "#6D28D9",
-        "m": metrics["MLR"],
+        "m": metrics["SVR_Poly"],
     },
 ]
 
