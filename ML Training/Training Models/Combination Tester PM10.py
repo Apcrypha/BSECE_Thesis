@@ -1,4 +1,4 @@
-"""This code tests the Ensemble model combinations with C-style #ifdef boolean switches."""
+"""This code tests the Ensemble model combinations (Meta MLR, Meta RF, Meta SVR RBF, Meta SVR Linear, Meta SVR Polynomial)."""
 
 import math
 import os

@@ -9,17 +9,15 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
-df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+df_train = pd.read_csv("Dataset/PM2.5_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM2.5_Meta.csv").dropna()
 
-# 2. Define Features and Target (must match exact CSV column headers)
-feature_cols_PM2_5 = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM2_5 = 'PM2.5(KCl)'                 
+# Define Features and Target (must match exact CSV column headers)
+feature_cols_PM2_5 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM2_5 = 'BAM_PM2.5'                 
 
 X_train_PM2_5 = df_train[feature_cols_PM2_5]
 y_train_PM2_5 = df_train[target_col_PM2_5]
@@ -54,10 +52,6 @@ joblib.dump(SVR_model_Sigmoid, os.path.join(saveModel_directory, 'PM2.5_Base_svr
 y_pred_Sigmoid = SVR_model_Sigmoid.predict(X_test_scaled)
 
 
-df_test_results['prediction_sigmoid'] = y_pred_Sigmoid #Add the predictions as a new column
-
-df_test_results.to_csv(os.path.join(saveCSV_directory, "PM2.5_SVR_dataset_with_predictions_sigmoid.csv"), index=False) # Save the new DataFrame to a CSV file
-
 # 7. Evaluate model performance metrics
 mae_Sigmoid = mean_absolute_error(y_test_PM2_5, y_pred_Sigmoid)
 rmse_Sigmoid = root_mean_squared_error(y_test_PM2_5, y_pred_Sigmoid)
@@ -78,7 +72,7 @@ min_val = min(y_test_PM2_5.min(), y_pred_Sigmoid.min())
 max_val = max(y_test_PM2_5.max(), y_pred_Sigmoid.max())
 ax1.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2, label='1:1 Ideal Line')
 
-ax1.set_title('PM2.5 SVR: Sigmoid', fontsize=12, fontweight='bold')
+ax1.set_title('PM2.5 Base SVR: Sigmoid', fontsize=12, fontweight='bold')
 ax1.set_xlabel('Reference BAM PM2.5 (µg/m³)', fontsize=11)
 ax1.set_ylabel('SVR Predicted PM2.5 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')

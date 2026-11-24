@@ -8,16 +8,15 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 
 # Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
+df_train = pd.read_csv("Dataset/PM10_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM10_Meta.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols_PM10 = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM10 = 'PM10(KCl)'                
+feature_cols_PM10 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM10 = 'BAM_PM10'                 
 
 X_train = df_train[feature_cols_PM10]
 y_train = df_train[target_col_PM10]
@@ -67,7 +66,7 @@ ax1.plot(
     label='1:1 Ideal Line',
 )
 
-ax1.set_title('PM10 MLR', fontsize=12, fontweight='bold')
+ax1.set_title('PM10 Base MLR', fontsize=12, fontweight='bold')
 ax1.set_xlabel('Reference BAM PM10 (µg/m³)', fontsize=11)
 ax1.set_ylabel('MLR Predicted PM10 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
@@ -106,7 +105,7 @@ ax2.plot(
 ax2.plot(
     sample_index,
     np.array(y_pred)[:samples_to_plot],
-    label='Stacked MLR Prediction',
+    label='Base MLR Prediction',
     color='#8B5CF6',
     linestyle='--',
     linewidth=2,

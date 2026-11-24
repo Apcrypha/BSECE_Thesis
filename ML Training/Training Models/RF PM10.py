@@ -8,18 +8,15 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
-df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+df_train = pd.read_csv("Dataset/PM10_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM10_Meta.csv").dropna()
 
-
-# 2. Define Features and Target (must match exact CSV column headers)
-feature_cols_PM10 = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM10 = 'PM10(KCl)'                
+# Define Features and Target (must match exact CSV column headers)
+feature_cols_PM10 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM10 = 'BAM_PM10'                 
 
 X_train = df_train[feature_cols_PM10]
 y_train = df_train[target_col_PM10]
@@ -43,10 +40,6 @@ joblib.dump(rf_model, os.path.join(saveModel_directory, 'PM10_Base_rf_model.jobl
 # 6. Predict on the separate test dataset
 y_pred = rf_model.predict(X_test)
 
-df_test_results['prediction'] = y_pred #Add the predictions as a new column
-
-df_test_results.to_csv(os.path.join(saveCSV_directory, "PM10_RF_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
-
 # 7. Evaluate model performance including MAE
 mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
@@ -67,9 +60,9 @@ min_val = min(y_test.min(), y_pred.min())
 max_val = max(y_test.max(), y_pred.max())
 ax1.plot([min_val, max_val], [min_val, max_val], 'r--', linewidth=2, label='1:1 Ideal Line')
 
-ax1.set_title('PM10 Random Forest', fontsize=12, fontweight='bold')
-ax1.set_xlabel('Reference BAM (µg/m³)', fontsize=11)
-ax1.set_ylabel('Model Predicted PM10 (µg/m³)', fontsize=11)
+ax1.set_title('PM10 Base Random Forest', fontsize=12, fontweight='bold')
+ax1.set_xlabel('Reference BAM PM10 (µg/m³)', fontsize=11)
+ax1.set_ylabel('RFR Predicted PM10 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
 ax1.grid(True, linestyle='--', alpha=0.5)
 

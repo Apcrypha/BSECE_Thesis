@@ -8,16 +8,15 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 
 # Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
+df_train = pd.read_csv("Dataset/PM2.5_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM2.5_Meta.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols_PM2_5 = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM2_5 = 'PM2.5(KCl)'                
+feature_cols_PM2_5 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM2_5 = 'BAM_PM2.5'                
 
 X_train = df_train[feature_cols_PM2_5]
 y_train = df_train[target_col_PM2_5]
@@ -39,7 +38,7 @@ mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)
 r2 = r2_score(y_test, y_pred)
 
-print("---PM2.5 MLR Validation Metrics ---")
+print("---PM2.5 Base MLR Validation Metrics ---")
 print(f"R² Score                      : {r2:.4f}")
 print(f"Root Mean Squared Error (RMSE): {rmse:.4f} µg/m³")
 print(f"Mean Absolute Error (MAE) : {mae:.4f} µg/m³")
@@ -67,7 +66,7 @@ ax1.plot(
     label='1:1 Ideal Line',
 )
 
-ax1.set_title('PM2.5 MLR', fontsize=12, fontweight='bold')
+ax1.set_title('PM2.5 Base MLR', fontsize=12, fontweight='bold')
 ax1.set_xlabel('Reference BAM PM2.5 (µg/m³)', fontsize=11)
 ax1.set_ylabel('MLR Predicted PM2.5 (µg/m³)', fontsize=11)
 ax1.legend(loc='upper left')
@@ -106,7 +105,7 @@ ax2.plot(
 ax2.plot(
     sample_index,
     np.array(y_pred)[:samples_to_plot],
-    label='Stacked MLR Prediction',
+    label='Base MLR Prediction',
     color='#8B5CF6',
     linestyle='--',
     linewidth=2,
@@ -115,7 +114,7 @@ ax2.plot(
 )
 
 ax2.set_title(
-    f'PM2.5 MLR Time-Series Validation (First {samples_to_plot} Samples)',
+    f'PM2.5 Base MLR Time-Series Validation (First {samples_to_plot} Samples)',
     fontsize=12,
     fontweight='bold',
 )

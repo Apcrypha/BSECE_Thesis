@@ -9,17 +9,15 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Basic_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
-df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+df_train = pd.read_csv("Dataset/PM10_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM10_Meta.csv").dropna()
 
-# 2. Define Features and Target (must match exact CSV column headers)
-feature_cols_PM10 = ['temp', 'RH', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM10 = 'PM10(KCl)'                 
+# Define Features and Target (must match exact CSV column headers)
+feature_cols_PM10 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM10 = 'BAM_PM10'                  
 
 X_train_PM10 = df_train[feature_cols_PM10]
 y_train_PM10 = df_train[target_col_PM10]
@@ -53,11 +51,6 @@ joblib.dump(SVR_model_Poly, os.path.join(saveModel_directory, 'PM10_Base_svr_pol
 
 # 6. Predict on the separate scaled test dataset
 y_pred_POLY = SVR_model_Poly.predict(X_test_scaled)
-
-
-df_test_results['prediction_poly'] = y_pred_POLY #Add the predictions as a new column
-
-df_test_results.to_csv(os.path.join(saveCSV_directory, "PM10_SVR_dataset_with_predictions_poly.csv"), index=False) # Save the new DataFrame to a CSV file
 
 # 7. Evaluate model performance metrics
 mae_POLY = mean_absolute_error(y_test_PM10, y_pred_POLY)
