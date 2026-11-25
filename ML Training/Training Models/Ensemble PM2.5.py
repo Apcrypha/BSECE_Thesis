@@ -8,22 +8,21 @@ import os
 
 saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
-saveCSV_directory = "CSV_Results"
 
 # Import / Load the pre-trained models from disk
-rf_model = joblib.load('Output Models/PM2.5_Base_rf_model.joblib')
-svr_model_RBF = joblib.load('Output Models/PM2.5_Base_svr_rbf_model.joblib')
-svr_model_LINEAR = joblib.load('Output Models/PM2.5_Base_svr_linear_model.joblib')
+Base_rf_model = joblib.load('Output Models/PM2.5_Base_rf_model.joblib')
+Base_mlr_model = joblib.load('Output Models/PM2.5_Base_mlr_model.joblib')
+Base_svr_rbf_model = joblib.load('Output Models/PM2.5_Base_svr_rbf_model.joblib')
+Base_svr_linear_model = joblib.load('Output Models/PM2.5_Base_svr_linear_model.joblib')
 scaler_X = joblib.load('Output Models/PM2.5_Base_svr_rbf_scaler_model.joblib')  #rbf and linear models use the same scaler, so we can load either one
 
 # Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/Meta_dataset.csv").dropna()
-df_test = pd.read_csv("Dataset/Validation_dataset.csv").dropna()
-df_test_results = df_test.copy() #Create a copy of the original test DataFrame
+df_train = pd.read_csv("Dataset/PM2.5_Meta.csv").dropna()
+df_test = pd.read_csv("Dataset/PM2.5_Validation.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
-feature_cols_PM2_5 = ['temp', 'RH', 'PM10(Smoke)', 'PM10(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
-target_col_PM2_5 = 'PM2.5(KCl)'              
+feature_cols_PM2_5 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
+target_col_PM2_5 = 'BAM_PM2.5'              
 
 # Assign the features and target for meta-model training and testing
 X_meta_train_raw = df_train[feature_cols_PM2_5]
@@ -37,17 +36,19 @@ X_meta_scaled = scaler_X.transform(X_meta_train_raw)
 X_meta_test_scaled = scaler_X.transform(X_meta_test_raw)
 
 # Predict using the base models
-pred_rf_meta_train = rf_model.predict(X_meta_train_raw)
-pred_svr_RBF_meta_train = svr_model_RBF.predict(X_meta_scaled)
-pred_svr_LINEAR_meta_train = svr_model_LINEAR.predict(X_meta_scaled)
+pred_rf_meta_train = Base_rf_model.predict(X_meta_train_raw)
+pred_mlr_meta_train = Base_mlr_model.predict(X_meta_train_raw)
+pred_svr_RBF_meta_train = Base_svr_rbf_model.predict(X_meta_scaled)
+pred_svr_LINEAR_meta_train = Base_svr_linear_model.predict(X_meta_scaled)
 
-pred_rf_meta_test = rf_model.predict(X_meta_test_raw)
-pred_svr_RBF_meta_test = svr_model_RBF.predict(X_meta_test_scaled)
-pred_svr_LINEAR_meta_test = svr_model_LINEAR.predict(X_meta_test_scaled)
+pred_rf_meta_test = Base_rf_model.predict(X_meta_test_raw)
+pred_mlr_meta_test = Base_mlr_model.predict(X_meta_test_raw)
+pred_svr_RBF_meta_test = Base_svr_rbf_model.predict(X_meta_test_scaled)
+pred_svr_LINEAR_meta_test = Base_svr_linear_model.predict(X_meta_test_scaled)
 
 # Stack the predictions from the base models to create the meta-model training and testing datasets
-X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_svr_RBF_meta_train, pred_svr_LINEAR_meta_train))
-X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_svr_RBF_meta_test, pred_svr_LINEAR_meta_test))
+X_meta_train_stacked = np.column_stack((pred_rf_meta_train, pred_mlr_meta_train, pred_svr_RBF_meta_train, pred_svr_LINEAR_meta_train))
+X_meta_test_stacked = np.column_stack((pred_rf_meta_test, pred_mlr_meta_test, pred_svr_RBF_meta_test, pred_svr_LINEAR_meta_test))
 
 mlr_model = LinearRegression()
 mlr_model.fit(X_meta_train_stacked, y_meta)
@@ -55,10 +56,6 @@ mlr_model.fit(X_meta_train_stacked, y_meta)
 joblib.dump(mlr_model, os.path.join(saveModel_directory, 'PM2.5_Ensemble_model.joblib'))
 
 y_pred = mlr_model.predict(X_meta_test_stacked)
-
-df_test_results['prediction'] = y_pred #Add the predictions as a new column
-
-df_test_results.to_csv(os.path.join(saveCSV_directory, "PM2.5_Ensemble_dataset_with_predictions.csv"), index=False) # Save the new DataFrame to a CSV file
 
 mae = mean_absolute_error(y_test, y_pred)
 rmse = root_mean_squared_error(y_test, y_pred)

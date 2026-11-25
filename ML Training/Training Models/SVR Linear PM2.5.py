@@ -11,8 +11,8 @@ saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/PM2.5_Basic.csv").dropna()
-df_test = pd.read_csv("Dataset/PM2.5_Meta.csv").dropna()
+df_train = pd.read_csv("Dataset/NE_PM2.5_Train.csv").dropna()
+df_test = pd.read_csv("Dataset/NE_PM2.5_Test.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
 feature_cols_PM2_5 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
