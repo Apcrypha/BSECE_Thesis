@@ -10,8 +10,8 @@ saveModel_directory = "Output Models"
 saveGraph_directory = "Graphs"
 
 # 1. Load separate Training and Testing CSV datasets
-df_train = pd.read_csv("Dataset/NE_PM2.5_Train.csv").dropna()
-df_test = pd.read_csv("Dataset/NE_PM2.5_Test.csv").dropna()
+df_train = pd.read_csv("Dataset/PM2.5_Basic.csv").dropna()
+df_test = pd.read_csv("Dataset/PM2.5_Meta.csv").dropna()
 
 # Define Features and Target (must match exact CSV column headers)
 feature_cols_PM2_5 = ['Temperature', 'Humidity', 'PM10(KCl)', 'PM10(Smoke)', 'PM2.5(KCl)', 'PM2.5(Smoke)', 'PM1(KCl)', 'PM1(Smoke)'] 
@@ -25,9 +25,9 @@ y_test = df_test[target_col_PM2_5]
 
 # 4. Initialize Random Forest with explicit hyperparameter control
 rf_model = RandomForestRegressor(
-    n_estimators=500,     # Total number of decision trees in the forest
-    max_depth=5,         # Maximum depth limit for each tree (prevents overfitting)
-    max_features='sqrt',  # Features considered at each split ('sqrt', 'log2', or integer/float)
+    n_estimators=600,     # Total number of decision trees in the forest
+    max_depth=3,         # Maximum depth limit for each tree (prevents overfitting)
+    max_features=3,  # Features considered at each split ('sqrt', 'log2', or integer/float)
     random_state=89     # Seed for reproducible results
 )
 

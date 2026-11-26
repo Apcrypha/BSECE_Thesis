@@ -26,9 +26,9 @@ y_test = df_test[target_col_PM10]
 
 # 4. Initialize Random Forest with explicit hyperparameter control
 rf_model = RandomForestRegressor(
-    n_estimators=300,     # Total number of decision trees in the forest
-    max_depth=10,         # Maximum depth limit for each tree (prevents overfitting)
-    max_features=5,  # Features considered at each split ('sqrt', 'log2', or integer/float)
+    n_estimators=600,     # Total number of decision trees in the forest
+    max_depth=3,         # Maximum depth limit for each tree (prevents overfitting)
+    max_features=3,  # Features considered at each split ('sqrt', 'log2', or integer/float)
     random_state=15     # Seed for reproducible results
 )
 

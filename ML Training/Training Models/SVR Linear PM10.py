@@ -37,8 +37,8 @@ joblib.dump(scaler_X, os.path.join(saveModel_directory, 'PM10_Base_svr_linear_sc
 
 SVR_model_LINEAR = SVR(
     kernel='linear',    # Radial Basis Function kernel
-    C=10.0,          # Penalty parameter C (controls support vector force cap)
-    epsilon=.01,     # Epsilon-insensitive tube margin
+    C=.5,          # Penalty parameter C (controls support vector force cap)
+    epsilon=.001,     # Epsilon-insensitive tube margin
 )
 
 

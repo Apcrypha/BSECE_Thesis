@@ -36,9 +36,9 @@ joblib.dump(scaler_X, os.path.join(saveModel_directory, 'PM10_Base_svr_rbf_scale
 # 4. Initialize SVR with explicit hyperparameter control
 SVR_model_RBF = SVR(
     kernel='rbf',    # Radial Basis Function kernel
-    C=20.0,          # Penalty parameter C (controls support vector force cap)
-    epsilon=0.01,     # Epsilon-insensitive tube margin
-    gamma=0.07        # Kernel coefficient (controls influence radius of each SV; or 'scale'/'auto')
+    C=15.0,          # Penalty parameter C (controls support vector force cap)
+    epsilon=0.001,     # Epsilon-insensitive tube margin
+    gamma=0.005        # Kernel coefficient (controls influence radius of each SV; or 'scale'/'auto')
 )
 
 # 5. Train the SVR model on the scaled training dataset
